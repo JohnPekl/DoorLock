@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/lv_device_name"
+        android:layout_weight="0.4"
+        android:textSize="30sp"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"/>
+    <Button
+        android:id="@+id/lv_btn_edit"
+        android:layout_weight="0.2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/edit"/>
+    <Button
+        android:id="@+id/lv_btn_delete"
+        android:layout_weight="0.2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/delete"/>
+    <Button
+        android:id="@+id/lv_btn_connect"
+        android:layout_weight="0.2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/connect"/>
+
+</LinearLayout>

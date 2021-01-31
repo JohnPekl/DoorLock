@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">DoorLock</string>
+    <string name="main_add_btn">Add new device</string>
+    <string name="main_no_device">No device added yet</string>
+    <string name="main_title">Smart Door Lock</string>
+    <string name="device_name">Device Name</string>
+    <string name="wifi_title">Setup information</string>
+    <string name="wifi_name">Name (SSID)</string>
+    <string name="wifi_pwd">Password</string>
+    <string name="wifi_no_pwd">No Password</string>
+    <string name="wifi_check">Checking WIFI SSID and password...</string>
+    <string name="wifi_check_ok">Checked! Correct SSID and password</string>
+    <string name="wifi_check_no">Please check your SSID and password, again!</string>
+    <string name="wifi_allow_setting">Please allow modify system setting</string>
+    <string name="hotspot_start">Starting a hotspot...</string>
+    <string name="hotspot_stop">Hotspot stopped!</string>
+    <string name="hotspot_scan">Scanning connected clients!</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="edit">Edit</string>
+    <string name="connect">Connect</string>
+    <string name="delete">Delete</string>
+
+    <string name="toast_save">Setup Information Stored!</string>
+    <string name="toast_update">Setup Information Updated!</string>
+    <string name="toast_delete">Setup Information Deleted!</string>
+
+</resources>
