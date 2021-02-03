@@ -20,6 +20,7 @@ public class Device {
         ID = id;
         Password = password;
     }
+    public Device(){ }
 
     public String getID() {
         return ID;
@@ -83,5 +84,14 @@ public class Device {
         String json = gson.toJson(this);
         prefsEditor.putString(ID, json);
         prefsEditor.commit();
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        boolean isEqual = false;
+        if (object != null && object instanceof Device) {
+            isEqual = (this.ID.equals(((Device) object).getID()));
+        }
+        return isEqual;
     }
 }

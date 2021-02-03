@@ -1,2 +1,2 @@
-include ':app', ':qrcodescanner', ':hotspotmanager'
+include ':app'
 rootProject.name = "DoorLock"

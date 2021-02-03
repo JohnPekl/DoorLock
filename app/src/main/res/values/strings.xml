@@ -22,6 +22,9 @@
     <string name="delete">Delete</string>
 
     <string name="toast_save">Setup Information Stored!</string>
+    <string name="toast_exist">Device already addedd!</string>
+    <string name="toast_name_ssid">Device name and Wifi SSID should not be empty!</string>
+    <string name="toast_len">Device name should not be longer than 10 characters!</string>
     <string name="toast_update">Setup Information Updated!</string>
     <string name="toast_delete">Setup Information Deleted!</string>
 

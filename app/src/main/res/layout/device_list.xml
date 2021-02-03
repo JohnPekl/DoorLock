@@ -15,18 +15,21 @@
         android:layout_weight="0.2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/edit"/>
+        android:text="@string/edit"
+        android:textAllCaps="false"/>
     <Button
         android:id="@+id/lv_btn_delete"
         android:layout_weight="0.2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/delete"/>
+        android:text="@string/delete"
+        android:textAllCaps="false"/>
     <Button
         android:id="@+id/lv_btn_connect"
         android:layout_weight="0.2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/connect"/>
+        android:text="@string/connect"
+        android:textAllCaps="false"/>
 
 </LinearLayout>
