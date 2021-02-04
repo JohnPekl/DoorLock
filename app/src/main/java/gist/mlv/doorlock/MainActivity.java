@@ -250,13 +250,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
         int end = d.gateway | ~d.netmask;
 
         HttpRequest http = new HttpRequest();
-        boolean result = false;
-        mMainHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                progressBar.setMessage(context.getString(R.string.progress_scan));
-            }
-        });
+        boolean result = true; // true for test
+        displayProgressUI(context, progressBar, context.getString(R.string.progress_scan));
         for (int i = 0; i < 255; i++) {
             int last = (((start >> 24) + i) << 24);
             int first = ((start << 8) >> 8);
@@ -265,39 +260,47 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 continue;
             }
             //
-            String nextIp = intToIp(next);
+            final String nextIp = intToIp(next);
+            displayProgressUI(context, progressBar, context.getString(R.string.progress_scan) + "\n" + nextIp);
             String checkDevice = "http://" + nextIp + ":8555/?check_dev=" + mDevice.getID();
             checkDevice = "http://172.126.19.213:8555/?check_dev=000-000-000";
             String changeWifi = "http://" + nextIp + ":8555/set_wifi?ssid=" + mDevice.getWifiSSID() + "&password=" + mDevice.getWifiPassword();
             changeWifi = "http://172.126.19.213:8555/set_wifi?ssid=mlv-306&password=wlsfkaus";
             String[] params = new String[]{checkDevice, changeWifi};
             result = http.configDevice(params);
-            if (true/*result*/) {
+            if (result) {
                 mDevice.setIpAdress("172.26.19.213"); //nextIp
                 mDevice.savePreferences(context.getSharedPreferences(Device.PREFERENCE, Context.MODE_PRIVATE));
-                mMainHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(context, R.string.toast_config, Toast.LENGTH_SHORT).show();
-                    }
-                });
+                makeToastUI(context, R.string.toast_config);
                 break;
             }
         }
+        displayProgressUI(context, progressBar, "");
+        if (!result){
+            makeToastUI(context, R.string.toast_config_error);
+        }
+    }
+
+    private void makeToastUI(final Context context, final int s){
         mMainHandler.post(new Runnable() {
             @Override
             public void run() {
-                progressBar.dismiss();
+                Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
             }
         });
-        if (!result){
-            mMainHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(context, R.string.toast_config_error, Toast.LENGTH_SHORT).show();
+    }
+
+    private void displayProgressUI(final Context context, final ProgressDialog progressBar, final String s){
+        mMainHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                if(s.equals("")){
+                    progressBar.dismiss();
+                } else {
+                    progressBar.setMessage(s);
                 }
-            });
-        }
+            }
+        });
     }
 
     private String intToIp(int i) {

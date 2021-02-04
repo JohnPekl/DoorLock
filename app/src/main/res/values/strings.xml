@@ -29,6 +29,6 @@
     <string name="toast_config_error">Configuration failed! Check your WIFI network</string>
 
     <string name="progress_connect_wifi">Connecting to your setup WIFI</string>
-    <string name="progress_scan">Scanning you Smart Door Lock</string>
+    <string name="progress_scan">Finding your Smart Door Lock</string>
 
 </resources>
