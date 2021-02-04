@@ -94,4 +94,12 @@ public class Device {
         }
         return isEqual;
     }
+
+    public String connectLocal(){
+        return "http://" + IpAdress + ":8555";
+    }
+
+    public String connectMLV(){
+        return "http://" + IpAdress + ":8555";
+    }
 }

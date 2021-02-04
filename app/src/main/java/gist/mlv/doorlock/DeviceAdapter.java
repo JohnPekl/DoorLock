@@ -1,7 +1,9 @@
 package gist.mlv.doorlock;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,9 +21,11 @@ import java.util.ArrayList;
 
 public class DeviceAdapter extends ArrayAdapter<Device> implements View.OnClickListener {
     private ArrayList<Device> mArrayDevice;
-    public DeviceAdapter(Context context, ArrayList<Device> devices) {
+    private Activity mMainActivity;
+    public DeviceAdapter(Activity activity, Context context, ArrayList<Device> devices) {
         super(context, 0, devices);
         mArrayDevice = devices;
+        mMainActivity = activity;
     }
 
     @Override
@@ -118,6 +122,10 @@ public class DeviceAdapter extends ArrayAdapter<Device> implements View.OnClickL
                 });
                 break;
             case R.id.lv_btn_connect:
+                Device connect = getItem(position);
+                Intent i = new Intent(getContext(), DeviceWebView.class);
+                i.putExtra("EXTRA_SESSION_ID", connect.connectLocal());
+                mMainActivity.startActivity(i);
                 break;
             case R.id.lv_btn_delete:
                 Device device_del = getItem(position);

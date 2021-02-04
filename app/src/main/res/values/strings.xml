@@ -26,5 +26,9 @@
     <string name="toast_update">Setup Information Updated!</string>
     <string name="toast_delete">Setup Information Deleted!</string>
     <string name="toast_config">Successfully configured!</string>
+    <string name="toast_config_error">Configuration failed! Check your WIFI network</string>
+
+    <string name="progress_connect_wifi">Connecting to your setup WIFI</string>
+    <string name="progress_scan">Scanning you Smart Door Lock</string>
 
 </resources>

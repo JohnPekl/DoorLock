@@ -3,6 +3,7 @@ package gist.mlv.doorlock;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,6 +12,7 @@ import android.net.DhcpInfo;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,11 +42,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private Button mAddDevice;
     private Device mDevice;
+    private Handler mMainHandler;
     private TextView mEmptyDeviceTxt;
     private ListView mDeviceListView;
     private ArrayList<Device> mDeviceArrList;
     private ArrayAdapter<Device> mDeviceAdapter;
-    private static final int REQUEST_CODE_QR_SCAN = 101;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,6 +66,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
 
         getAllPreferense();
+        mMainHandler = new Handler();
     }
 
     private boolean requestPermission(String permission) {
@@ -77,7 +80,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private void getAllPreferense() {
         SharedPreferences prefs = getSharedPreferences(Device.PREFERENCE, Context.MODE_PRIVATE);
         mDeviceArrList = new ArrayList<Device>();
-        mDeviceAdapter = new DeviceAdapter(MainActivity.this, mDeviceArrList);
+        mDeviceAdapter = new DeviceAdapter(this, MainActivity.this, mDeviceArrList);
         mDeviceListView.setAdapter(mDeviceAdapter);
 
         Map<String, ?> allEntries = prefs.getAll();
@@ -184,6 +187,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 final String ssid_t = ssid;
                 final String password_t = pwd;
                 final Context context_t = MainActivity.this;
+                final ProgressDialog progressBar = new ProgressDialog(context_t);
+                progressBar.setCancelable(false);//you can cancel it by pressing back button
+                progressBar.setMessage(getString(R.string.progress_connect_wifi));
+                progressBar.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                progressBar.setProgress(0);//initially progress is 0
+                progressBar.setMax(100);//sets the maximum value 100
+                progressBar.show();//displays the progress bar
+
                 (new Thread() {
                     @Override
                     public void run() {
@@ -193,7 +204,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        scanLocalWifi(context_t);
+                        scanLocalWifi(context_t, progressBar);
                     }
                 }).start();
                 alertDialog.dismiss();
@@ -220,7 +231,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         //boolean result = wifiManager.reconnect();
     }
 
-    private void scanLocalWifi(Context context) {
+    private void scanLocalWifi(final Context context, final ProgressDialog progressBar) {
         WifiManager wifii = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         DhcpInfo d = wifii.getDhcpInfo();
 
@@ -239,6 +250,13 @@ public class MainActivity extends Activity implements View.OnClickListener {
         int end = d.gateway | ~d.netmask;
 
         HttpRequest http = new HttpRequest();
+        boolean result = false;
+        mMainHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                progressBar.setMessage(context.getString(R.string.progress_scan));
+            }
+        });
         for (int i = 0; i < 255; i++) {
             int last = (((start >> 24) + i) << 24);
             int first = ((start << 8) >> 8);
@@ -249,14 +267,36 @@ public class MainActivity extends Activity implements View.OnClickListener {
             //
             String nextIp = intToIp(next);
             String checkDevice = "http://" + nextIp + ":8555/?check_dev=" + mDevice.getID();
-            checkDevice = "http://172.26.19.213:8555/?check_dev=000-000-000";
+            checkDevice = "http://172.126.19.213:8555/?check_dev=000-000-000";
             String changeWifi = "http://" + nextIp + ":8555/set_wifi?ssid=" + mDevice.getWifiSSID() + "&password=" + mDevice.getWifiPassword();
-            changeWifi = "http://172.26.19.213:8555/set_wifi?ssid=mlv-306&password=wlsfkaus";
+            changeWifi = "http://172.126.19.213:8555/set_wifi?ssid=mlv-306&password=wlsfkaus";
             String[] params = new String[]{checkDevice, changeWifi};
-            boolean result = http.configDevice(params);
-            if (result) {
+            result = http.configDevice(params);
+            if (true/*result*/) {
+                mDevice.setIpAdress("172.26.19.213"); //nextIp
+                mDevice.savePreferences(context.getSharedPreferences(Device.PREFERENCE, Context.MODE_PRIVATE));
+                mMainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(context, R.string.toast_config, Toast.LENGTH_SHORT).show();
+                    }
+                });
                 break;
             }
+        }
+        mMainHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                progressBar.dismiss();
+            }
+        });
+        if (!result){
+            mMainHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(context, R.string.toast_config_error, Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 
@@ -267,5 +307,3 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 ((i >> 24) & 0xFF);
     }
 }
-
-
