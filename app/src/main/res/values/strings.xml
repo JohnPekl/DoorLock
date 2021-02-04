@@ -8,11 +8,9 @@
     <string name="wifi_name">Name (SSID)</string>
     <string name="wifi_pwd">Password</string>
     <string name="wifi_no_pwd">No Password</string>
-    <string name="wifi_check">Checking WIFI SSID and password...</string>
     <string name="wifi_check_ok">Checked! Correct SSID and password</string>
     <string name="wifi_check_no">Please check your SSID and password, again!</string>
     <string name="wifi_allow_setting">Please allow modify system setting</string>
-    <string name="hotspot_start">Starting a hotspot...</string>
     <string name="hotspot_stop">Hotspot stopped!</string>
     <string name="hotspot_scan">Scanning connected clients!</string>
     <string name="ok">OK</string>
@@ -27,5 +25,6 @@
     <string name="toast_len">Device name should not be longer than 10 characters!</string>
     <string name="toast_update">Setup Information Updated!</string>
     <string name="toast_delete">Setup Information Deleted!</string>
+    <string name="toast_config">Successfully configured!</string>
 
 </resources>

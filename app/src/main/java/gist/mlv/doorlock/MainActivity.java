@@ -11,7 +11,6 @@ import android.net.DhcpInfo;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -61,9 +60,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             int REQUEST_CODE = 1001;
             ActivityCompat.requestPermissions(MainActivity.this,
                     new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE,
-                            Manifest.permission.VIBRATE, Manifest.permission.ACCESS_WIFI_STATE,
-                            Manifest.permission.INTERNET},
-                    REQUEST_CODE);
+                            Manifest.permission.ACCESS_WIFI_STATE, Manifest.permission.INTERNET}, REQUEST_CODE);
         }
 
         getAllPreferense();
@@ -184,7 +181,21 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     mEmptyDeviceTxt.setVisibility(View.GONE);
                 }
 
-                connect2Wifi(ssid, pwd);
+                final String ssid_t = ssid;
+                final String password_t = pwd;
+                final Context context_t = MainActivity.this;
+                (new Thread() {
+                    @Override
+                    public void run() {
+                        connect2Wifi(context_t, ssid_t, password_t);
+                        try {
+                            sleep(3000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        scanLocalWifi(context_t);
+                    }
+                }).start();
                 alertDialog.dismiss();
                 Toast.makeText(MainActivity.this, R.string.toast_save, Toast.LENGTH_SHORT).show();
             }
@@ -194,33 +205,22 @@ public class MainActivity extends Activity implements View.OnClickListener {
         alertDialog.show();
     }
 
-    private void connect2Wifi(final String ssid, final String pwd) {
-        final Context context = MainActivity.this;
-        final Handler handler = new Handler();
-        final Thread wifi_check = new Thread() {
-            @Override
-            public void run() {
-                WifiConfiguration wifiConfig = new WifiConfiguration();
+    private void connect2Wifi(Context context, String ssid, String pwd) {
+        WifiConfiguration wifiConfig = new WifiConfiguration();
 
-                wifiConfig.SSID = String.format("\"%s\"", ssid);
-                wifiConfig.preSharedKey = String.format("\"%s\"", pwd);
+        wifiConfig.SSID = String.format("\"%s\"", ssid);
+        wifiConfig.preSharedKey = String.format("\"%s\"", pwd);
 
-                WifiManager wifiManager = (WifiManager) context.getSystemService(android.content.Context.WIFI_SERVICE);
-                wifiManager.setWifiEnabled(true);
-                int netId = wifiManager.addNetwork(wifiConfig);
-                wifiManager.disconnect();
-                boolean result = wifiManager.enableNetwork(netId, true);
-                wifiManager.saveConfiguration();
-                //boolean result = wifiManager.reconnect();
-
-                scanLocalWifi();
-            }
-        };
-        wifi_check.start();
+        WifiManager wifiManager = (WifiManager) context.getSystemService(android.content.Context.WIFI_SERVICE);
+        wifiManager.setWifiEnabled(true);
+        int netId = wifiManager.addNetwork(wifiConfig);
+        wifiManager.disconnect();
+        boolean result = wifiManager.enableNetwork(netId, true);
+        wifiManager.saveConfiguration();
+        //boolean result = wifiManager.reconnect();
     }
 
-    private void scanLocalWifi() {
-        final Context context = MainActivity.this;
+    private void scanLocalWifi(Context context) {
         WifiManager wifii = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         DhcpInfo d = wifii.getDhcpInfo();
 
