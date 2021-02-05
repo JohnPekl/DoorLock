@@ -35,6 +35,7 @@ public class HttpRequest{
         try {
             URL url = new URL(s);//action url for example changing wifi etc. or open door
             conn = (HttpURLConnection) url.openConnection();
+            conn.setConnectTimeout(3000);
             conn.setRequestProperty("Authorization", "Basic " + base64);
 
             responseCode = conn.getResponseCode();
@@ -68,6 +69,7 @@ public class HttpRequest{
         try {
             url = new URL(urls[0]);
             urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setConnectTimeout(3000);
             InputStream in = urlConnection.getInputStream();
             responseCode = urlConnection.getResponseCode();
             InputStreamReader isw = new InputStreamReader(in);
@@ -85,6 +87,7 @@ public class HttpRequest{
                 String base64 = Base64.encodeToString(data, Base64.DEFAULT);
                 url = new URL(urls[1]);//action url for example changing wifi etc. or open door
                 urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setConnectTimeout(3000);
                 urlConnection.setRequestProperty("Authorization", "Basic " + base64);
 
                 if(urlConnection.getResponseCode() == 200){

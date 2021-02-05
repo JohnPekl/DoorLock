@@ -8,12 +8,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.net.DhcpInfo;
+import android.net.ConnectivityManager;
+import android.net.LinkAddress;
+import android.net.LinkProperties;
+import android.net.Network;
+import android.net.RouteInfo;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -27,7 +30,9 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
+import java.net.Inet4Address;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import androidx.core.app.ActivityCompat;
@@ -232,35 +237,38 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
     private void scanLocalWifi(final Context context, final ProgressDialog progressBar) {
-        WifiManager wifii = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        DhcpInfo d = wifii.getDhcpInfo();
-
-        String s_dns1 = "DNS 1: " + intToIp(d.dns1);
-        String s_dns2 = "DNS 2: " + intToIp(d.dns2);
-        String s_gateway = "Default Gateway: " + intToIp(d.gateway);
-        String s_ipAddress = "IP Address: " + intToIp(d.ipAddress);
-        String s_leaseDuration = "Lease Time: " + intToIp(d.leaseDuration);
-        String s_netmask = "Subnet Mask: " + intToIp(d.netmask);
-        String s_serverAddress = "Server IP: " + intToIp(d.serverAddress);
-        //dispaly them
-        Log.d(TAG, "Network Info\n" + s_dns1 + "\n" + s_dns2 + "\n" + s_gateway + "\n" +
-                s_ipAddress + "\n" + s_leaseDuration + "\n" + s_netmask + "\n" + s_serverAddress);
-
-        int start = d.gateway & d.netmask << 1;
-        int end = d.gateway | ~d.netmask;
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        Network[] networks = cm.getAllNetworks();
+        String gateway = "";
+        String myIp = "";
+        for (Network network : networks) {
+            LinkProperties linkProperties = cm.getLinkProperties(network);
+            List<LinkAddress> linkAddresses = linkProperties.getLinkAddresses();
+            List<RouteInfo> routes = linkProperties.getRoutes();
+            for (LinkAddress addr : linkAddresses) {
+                if (addr.getAddress() instanceof Inet4Address) {
+                    //prefixLen = addr.getPrefixLength();
+                    myIp = addr.getAddress().getHostAddress();
+                }
+            }
+            for (RouteInfo route : routes) {
+                if (route.getGateway() instanceof Inet4Address && !route.getGateway().isAnyLocalAddress()) {
+                    gateway = route.getGateway().getHostAddress();
+                }
+            }
+        }
 
         HttpRequest http = new HttpRequest();
         boolean result = true; // true for test
+        String prefix = myIp.substring(0, myIp.lastIndexOf(".") + 1);
+
         displayProgressUI(context, progressBar, context.getString(R.string.progress_scan));
-        for (int i = 0; i < 255; i++) {
-            int last = (((start >> 24) + i) << 24);
-            int first = ((start << 8) >> 8);
-            int next = last | first;
-            if (next == d.gateway || next == d.ipAddress) { // ignore itself and gateway
+        for (int i = 0; i <= 255; i++) {
+            String nextIp = prefix + i;
+            if(nextIp.equals(myIp) || nextIp.equals(gateway)){
                 continue;
             }
             //
-            final String nextIp = intToIp(next);
             displayProgressUI(context, progressBar, context.getString(R.string.progress_scan) + "\n" + nextIp);
             String checkDevice = "http://" + nextIp + ":8555/?check_dev=" + mDevice.getID();
             checkDevice = "http://172.126.19.213:8555/?check_dev=000-000-000";
@@ -301,12 +309,5 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 }
             }
         });
-    }
-
-    private String intToIp(int i) {
-        return (i & 0xFF) + "." +
-                ((i >> 8) & 0xFF) + "." +
-                ((i >> 16) & 0xFF) + "." +
-                ((i >> 24) & 0xFF);
     }
 }
