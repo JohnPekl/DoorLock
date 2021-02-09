@@ -18,6 +18,9 @@
     <string name="edit">Edit</string>
     <string name="connect">Connect</string>
     <string name="delete">Delete</string>
+    <string name="hint_device_name">MLV Smart</string>
+    <string name="hint_wifi_ssid">mlv-door5g</string>
+    <string name="hint_wifi_pwd">wlsfkaus</string>
 
     <string name="toast_save">Setup Information Stored!</string>
     <string name="toast_exist">Device already addedd!</string>

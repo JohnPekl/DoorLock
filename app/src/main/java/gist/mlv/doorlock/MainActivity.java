@@ -17,8 +17,12 @@ import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -71,6 +75,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
 
         getAllPreferense();
+        registerForContextMenu(mDeviceListView);
         mMainHandler = new Handler();
     }
 
@@ -120,6 +125,93 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    }
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.edit_delete, menu);
+    }
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        final int position = info.position;
+        final Context context = MainActivity.this;
+
+        switch (item.getItemId()) {
+            case R.id.menu_edit:
+                LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                final View view = layoutInflater.inflate(R.layout.input_wifi_info, null);
+                final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+                alertDialog.setTitle(R.string.wifi_title);
+                alertDialog.setCancelable(false);
+
+                final EditText ssid_edt = (EditText) view.findViewById(R.id.wifi_name);
+                final EditText pwd_edt = (EditText) view.findViewById(R.id.wifi_pwd);
+                final LinearLayout pwd_layout = (LinearLayout) view.findViewById(R.id.wifi_pwd_layout);
+                final CheckBox cbx = (CheckBox) view.findViewById(R.id.wifi_cbx);
+                final EditText name_edt = (EditText) view.findViewById(R.id.device_name);
+                Button wifi_ok = (Button) view.findViewById(R.id.wifi_ok);
+                Button wifi_cancel = (Button) view.findViewById(R.id.wifi_cancel);
+
+                final Device device = mDeviceArrList.get(position);
+                ssid_edt.setText(device.getWifiSSID());
+                name_edt.setText(device.getName());
+                if(device.getWifiPassword().length() == 0){
+                    cbx.setChecked(true);
+                    pwd_layout.setVisibility(View.GONE);
+                } else{
+                    pwd_edt.setText(device.getWifiPassword());
+                }
+                alertDialog.setView(view);
+                alertDialog.show();
+                wifi_cancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        alertDialog.dismiss();
+                    }
+                });
+                wifi_ok.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String device_name = name_edt.getText().toString();
+                        String ssid = ssid_edt.getText().toString();
+                        String pwd = pwd_edt.getText().toString();
+                        alertDialog.dismiss();
+
+                        device.setName(device_name);
+                        device.setWifiSSID(ssid);
+                        device.setWifiPassword(pwd);
+
+                        mDeviceArrList.set(position, device);
+                        mDeviceAdapter.notifyDataSetChanged();
+                        device.savePreferences(context.getSharedPreferences(Device.PREFERENCE, Context.MODE_PRIVATE));
+                        Toast.makeText(context, R.string.toast_update, Toast.LENGTH_SHORT).show();
+                    }
+                });
+                cbx.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (cbx.isChecked()) {
+                            pwd_layout.setVisibility(View.GONE);
+                            pwd_edt.setText("");
+                        } else {
+                            pwd_layout.setVisibility(View.VISIBLE);
+                        }
+                    }
+                });
+                return true;
+            case R.id.menu_delete:
+                Device device_del = mDeviceArrList.get(position);
+                SharedPreferences.Editor editor = context.getSharedPreferences(Device.PREFERENCE, Context.MODE_PRIVATE).edit();
+                editor.remove(device_del.getID()).apply();
+                mDeviceArrList.remove(device_del);
+                mDeviceAdapter.notifyDataSetChanged();
+                Toast.makeText(context, R.string.toast_delete, Toast.LENGTH_SHORT).show();
+                return  true;
+            default:
+                return super.onContextItemSelected(item);
+        }
     }
 
     /*https://code.tutsplus.com/tutorials/storing-data-securely-on-android--cms-30558
