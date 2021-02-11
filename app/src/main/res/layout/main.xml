@@ -35,19 +35,24 @@
             android:layout_height="wrap_content" />
     </LinearLayout>
 
-    <Button
+    <ImageButton
         android:id="@+id/btn_add_device"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_height="0dp"
         android:layout_weight="0.05"
-        android:text="@string/main_add_btn"></Button>
+        android:background="@drawable/add"
+        android:layout_marginBottom="15dp"/>
 
-    <LinearLayout
+    <TextView
         android:layout_width="fill_parent"
         android:layout_height="0dip"
         android:layout_gravity="top"
         android:layout_weight="0.05"
-        android:orientation="vertical">
-    </LinearLayout>
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:textAllCaps="false"
+        android:text="@string/copyright">
+    </TextView>
 
 </LinearLayout>

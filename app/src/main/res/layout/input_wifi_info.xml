@@ -23,6 +23,7 @@
             android:layout_height="match_parent"
             android:layout_weight="0.65"
             android:gravity="center_vertical|center"
+            android:inputType="text"
             android:hint="@string/hint_device_name">
         </EditText>
     </LinearLayout>

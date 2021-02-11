@@ -7,31 +7,37 @@
     <ImageView
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="0.15"
+        android:layout_weight="0.08"
         android:background="@drawable/doorlock"/>
 
     <TextView
         android:id="@+id/lv_device_name"
-        android:layout_weight="0.4"
-        android:textSize="15sp"
+        android:layout_weight="0.52"
+        android:textSize="25sp"
         android:textAlignment="center"
         android:layout_width="0dp"
         android:layout_height="match_parent"/>
 
     <Button
         android:id="@+id/lv_btn_connect"
-        android:layout_weight="0.2"
+        android:layout_weight="0.15"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:background="@drawable/connect"
-        android:layout_marginLeft="15dp"/>
+        android:text="@string/connect"
+        android:gravity="bottom|center"
+        android:textAllCaps="false"
+        android:layout_marginStart="15dp"/>
 
     <Button
         android:id="@+id/lv_btn_stream"
-        android:layout_weight="0.2"
+        android:layout_weight="0.15"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:background="@drawable/stream"
-        android:layout_marginLeft="15dp"/>
+        android:text="@string/stream"
+        android:gravity="bottom|center"
+        android:textAllCaps="false"
+        android:layout_marginStart="15dp"/>
 
 </LinearLayout>

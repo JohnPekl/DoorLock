@@ -27,6 +27,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -49,7 +50,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
      */
     private String TAG = "MainActivity";
 
-    private Button mAddDevice;
+    private ImageButton mAddDevice;
     private Device mDevice;
     private Handler mMainHandler;
     private TextView mEmptyDeviceTxt;
@@ -62,7 +63,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        mAddDevice = (Button) findViewById(R.id.btn_add_device);
+        mAddDevice = findViewById(R.id.btn_add_device);
         mDeviceListView = findViewById(R.id.device_list);
         mEmptyDeviceTxt = findViewById(R.id.empty_device_list);
         mAddDevice.setOnClickListener(this);

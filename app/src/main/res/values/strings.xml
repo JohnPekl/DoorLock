@@ -17,6 +17,7 @@
     <string name="cancel">Cancel</string>
     <string name="edit">Edit</string>
     <string name="connect">Connect</string>
+    <string name="stream">Stream</string>
     <string name="delete">Delete</string>
     <string name="hint_device_name">MLV Smart</string>
     <string name="hint_wifi_ssid">mlv-door5g</string>
@@ -33,5 +34,7 @@
 
     <string name="progress_connect_wifi">Connecting to your setup WIFI</string>
     <string name="progress_scan">Finding your Smart Door Lock</string>
+
+    <string name="copyright">Copyrights @MLV Inc. 2021</string>
 
 </resources>
