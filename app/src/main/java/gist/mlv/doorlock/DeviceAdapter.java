@@ -54,11 +54,15 @@ public class DeviceAdapter extends ArrayAdapter<Device> implements View.OnClickL
         switch (viewItem.getId()) {
             case R.id.lv_btn_connect:
                 Device connect = getItem(position);
-                Intent i = new Intent(getContext(), DeviceWebView.class);
-                i.putExtra("EXTRA_SESSION_ID", connect.connectLocal());
-                mMainActivity.startActivity(i);
+                Intent iConnect = new Intent(getContext(), DeviceWebView.class);
+                iConnect.putExtra("EXTRA_SESSION_ID", connect.connectLocal());
+                mMainActivity.startActivity(iConnect);
                 break;
             case R.id.lv_btn_stream:
+                Device stream = getItem(position);
+                Intent iStream = new Intent(getContext(), StreamingWebView.class);
+                iStream.putExtra("EXTRA_SESSION_ID", stream.connectLocal());
+                mMainActivity.startActivity(iStream);
                 break;
         }
     }

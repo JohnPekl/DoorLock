@@ -19,6 +19,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".DeviceWebView"></activity>
+        <activity android:name=".StreamingWebView"></activity>
     </application>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
