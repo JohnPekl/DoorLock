@@ -93,6 +93,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mDeviceArrList = new ArrayList<Device>();
         mDeviceAdapter = new DeviceAdapter(this, MainActivity.this, mDeviceArrList);
         mDeviceListView.setAdapter(mDeviceAdapter);
+        mDeviceListView.setDividerHeight(2);
 
         Map<String, ?> allEntries = prefs.getAll();
         if (allEntries.size() > 0) {
@@ -117,7 +118,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_add_device:
-                mDevice = new Device("000-000-000", "admin", "admin");
+                mDevice = new Device("000-000-000" + Math.random(), "admin", "admin");
                 showWIFIDialog();
                 //connect2Wifi("mlv-door5g", "wlsfkaus");
                 break;
