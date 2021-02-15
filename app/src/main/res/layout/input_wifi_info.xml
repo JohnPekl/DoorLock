@@ -96,16 +96,10 @@
             android:layout_width="0dp"
             android:inputType="textPassword"
             android:layout_height="match_parent"
-            android:layout_weight="0.55"
+            android:layout_weight="0.65"
             android:gravity="center_vertical|center"
             android:hint="@string/hint_wifi_pwd">
         </EditText>
-        <ImageView
-            android:id="@+id/imgv_show_password"
-            android:layout_width="0dp"
-            android:layout_height="15dp"
-            android:layout_weight="0.1"
-            android:background="@drawable/hide_password"/>
     </LinearLayout>
 
     <LinearLayout

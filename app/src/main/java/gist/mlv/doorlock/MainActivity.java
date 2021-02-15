@@ -224,37 +224,37 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 alertDialog.setTitle(R.string.wifi_title);
                 alertDialog.setCancelable(false);
 
-                final EditText ssid_edt = (EditText) view.findViewById(R.id.wifi_name);
-                final EditText pwd_edt = (EditText) view.findViewById(R.id.wifi_pwd);
+                final EditText edt_ssid = (EditText) view.findViewById(R.id.wifi_name);
+                final EditText edt_password = (EditText) view.findViewById(R.id.wifi_pwd);
                 final LinearLayout pwd_layout = (LinearLayout) view.findViewById(R.id.wifi_pwd_layout);
                 final CheckBox cbx = (CheckBox) view.findViewById(R.id.wifi_cbx);
-                final EditText name_edt = (EditText) view.findViewById(R.id.device_name);
-                Button wifi_ok = (Button) view.findViewById(R.id.wifi_ok);
-                Button wifi_cancel = (Button) view.findViewById(R.id.wifi_cancel);
+                final EditText edt_name = (EditText) view.findViewById(R.id.device_name);
+                Button btn_wifiok = (Button) view.findViewById(R.id.wifi_ok);
+                Button btn_wificancel = (Button) view.findViewById(R.id.wifi_cancel);
 
                 final Device device = mDeviceArrList.get(position);
-                ssid_edt.setText(device.getWifiSSID());
-                name_edt.setText(device.getName());
+                edt_ssid.setText(device.getWifiSSID());
+                edt_name.setText(device.getName());
                 if(device.getWifiPassword().length() == 0){
                     cbx.setChecked(true);
                     pwd_layout.setVisibility(View.GONE);
                 } else{
-                    pwd_edt.setText(device.getWifiPassword());
+                    edt_password.setText(device.getWifiPassword());
                 }
                 alertDialog.setView(view);
                 alertDialog.show();
-                wifi_cancel.setOnClickListener(new View.OnClickListener() {
+                btn_wificancel.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         alertDialog.dismiss();
                     }
                 });
-                wifi_ok.setOnClickListener(new View.OnClickListener() {
+                btn_wifiok.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        String device_name = name_edt.getText().toString();
-                        String ssid = ssid_edt.getText().toString();
-                        String pwd = pwd_edt.getText().toString();
+                        String device_name = edt_name.getText().toString();
+                        String ssid = edt_ssid.getText().toString();
+                        String pwd = edt_password.getText().toString();
                         alertDialog.dismiss();
 
                         device.setName(device_name);
@@ -272,7 +272,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     public void onClick(View view) {
                         if (cbx.isChecked()) {
                             pwd_layout.setVisibility(View.GONE);
-                            pwd_edt.setText("");
+                            edt_password.setText("");
                         } else {
                             pwd_layout.setVisibility(View.VISIBLE);
                         }
