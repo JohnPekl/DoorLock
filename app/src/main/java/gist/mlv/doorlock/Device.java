@@ -96,7 +96,8 @@ public class Device {
     }
 
     public String connectLocal(){
-        return "http://" + IpAdress + ":8555";
+        //return "http://" + IpAdress + ":8555";
+        return "http://172.26.19.213:8555";
     }
 
     public String connectMLV(){

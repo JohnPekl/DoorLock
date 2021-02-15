@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.LinkAddress;
 import android.net.LinkProperties;
@@ -17,6 +19,8 @@ import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.LocaleList;
+import android.util.DisplayMetrics;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -38,6 +42,7 @@ import com.google.gson.Gson;
 import java.net.Inet4Address;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import androidx.core.app.ActivityCompat;
@@ -67,6 +72,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mDeviceListView = findViewById(R.id.device_list);
         mEmptyDeviceTxt = findViewById(R.id.empty_device_list);
         mAddDevice.setOnClickListener(this);
+        findViewById(R.id.imb_setting).setOnClickListener(this);
 
         if (!requestPermission(Manifest.permission.CAMERA)) {
             int REQUEST_CODE = 1001;
@@ -116,13 +122,63 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
+        Context context = MainActivity.this;
         switch (view.getId()) {
             case R.id.btn_add_device:
                 mDevice = new Device("000-000-000" + Math.random(), "admin", "admin");
                 showWIFIDialog();
                 //connect2Wifi("mlv-door5g", "wlsfkaus");
                 break;
+            case R.id.imb_setting:
+                LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                View view_setting = layoutInflater.inflate(R.layout.langguage_setting, null);
+                final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+                alertDialog.setTitle(R.string.lang_ch);
+                alertDialog.setCancelable(true);
+
+                view_setting.findViewById(R.id.cbx_lang_en).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        setAppLocale("en");
+                        alertDialog.dismiss();
+                    }
+                });
+                view_setting.findViewById(R.id.cbx_lang_vn).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        setAppLocale("vi");
+                        alertDialog.dismiss();
+                    }
+                });
+                alertDialog.setView(view_setting);
+                alertDialog.show();
+                break;
         }
+    }
+
+    private void setAppLocale(String localeCode){
+        Resources res = getResources();
+        DisplayMetrics dm = res.getDisplayMetrics();
+        Configuration conf = res.getConfiguration();
+        Context context = MainActivity.this;
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            LocaleList ll = conf.getLocales();
+            for(int i=0; i<ll.size(); i++){
+                if(!ll.get(i).getCountry().equals(localeCode)){
+                    conf.setLocale(new Locale(localeCode.toLowerCase()));
+                }
+            }
+        } else {
+            Locale locale = context.getResources().getConfiguration().locale;
+            if(!locale.getCountry().equals(localeCode)){
+                conf.setLocale(new Locale(localeCode.toLowerCase()));
+            }
+        }
+        res.updateConfiguration(conf, dm);
+        Intent intent = getIntent();
+        finish();
+        startActivity(intent);
     }
 
     @Override
