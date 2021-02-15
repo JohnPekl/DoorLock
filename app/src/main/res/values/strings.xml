@@ -39,7 +39,7 @@
 
     <string name="lang_ch">Change language</string>
     <string name="lang_en">English</string>
-    <string name="lang_vn">Tiếng việt</string>
-    <string name="lang_kr">한국어</string>
+    <string name="lang_vi">Tiếng việt</string>
+    <string name="lang_ko">한국어</string>
 
 </resources>

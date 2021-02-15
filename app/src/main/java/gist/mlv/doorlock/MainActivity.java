@@ -54,6 +54,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
      * Called when the activity is first created.
      */
     private String TAG = "MainActivity";
+    private String LANGUAGE_PREF = "LANGUAGE_PREF";
 
     private ImageButton mAddDevice;
     private Device mDevice;
@@ -113,6 +114,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
             mDeviceArrList.add(obj);
             mDeviceAdapter.notifyDataSetChanged();
         }
+
+        prefs = getPreferences(Context.MODE_PRIVATE);
+        String localeCode = prefs.getString(LANGUAGE_PREF, "en");
+        Resources res = getResources();
+        DisplayMetrics dm = res.getDisplayMetrics();
+        Configuration conf = res.getConfiguration();
+        conf.setLocale(new Locale(localeCode.toLowerCase()));
+        res.updateConfiguration(conf, dm);
     }
 
     @Override
@@ -136,17 +145,24 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 alertDialog.setTitle(R.string.lang_ch);
                 alertDialog.setCancelable(true);
 
-                view_setting.findViewById(R.id.cbx_lang_en).setOnClickListener(new View.OnClickListener() {
+                view_setting.findViewById(R.id.btn_lang_en).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         setAppLocale("en");
                         alertDialog.dismiss();
                     }
                 });
-                view_setting.findViewById(R.id.cbx_lang_vn).setOnClickListener(new View.OnClickListener() {
+                view_setting.findViewById(R.id.btn_lang_vi).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         setAppLocale("vi");
+                        alertDialog.dismiss();
+                    }
+                });
+                view_setting.findViewById(R.id.btn_lang_ko).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        setAppLocale("ko");
                         alertDialog.dismiss();
                     }
                 });
@@ -175,6 +191,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 conf.setLocale(new Locale(localeCode.toLowerCase()));
             }
         }
+        SharedPreferences.Editor prefsEditor = getPreferences(Context.MODE_PRIVATE).edit();
+        prefsEditor.putString(LANGUAGE_PREF, localeCode);
+        prefsEditor.commit();
+
         res.updateConfiguration(conf, dm);
         Intent intent = getIntent();
         finish();

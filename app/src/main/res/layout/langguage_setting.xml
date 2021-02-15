@@ -1,57 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <LinearLayout
+    <Button
+        android:id="@+id/btn_lang_en"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.3"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.9"
-            android:text="@string/lang_en" />
-        <CheckBox
-            android:id="@+id/cbx_lang_en"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.1"/>
-    </LinearLayout>
+        android:layout_weight="0.2"
+        android:text="@string/lang_en"
+        android:drawableLeft= "@drawable/flag_round_us"/>
 
-    <LinearLayout
+    <Button
+        android:id="@+id/btn_lang_vi"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.3"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.9"
-            android:text="@string/lang_vn" />
-        <CheckBox
-            android:id="@+id/cbx_lang_vn"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.1"/>
-    </LinearLayout>
+        android:layout_weight="0.2"
+        android:text="@string/lang_vi"
+        android:drawableLeft="@drawable/flag_round_vi" />
 
-    <LinearLayout
+    <Button
+        android:id="@+id/btn_lang_ko"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.3"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.9"
-            android:text="@string/lang_kr" />
-        <CheckBox
-            android:id="@+id/cbx_lang_kr"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.1"/>
-    </LinearLayout>
+        android:layout_weight="0.2"
+        android:text="@string/lang_ko"
+        android:drawableLeft="@drawable/flag_round_ko"/>
 </LinearLayout>
