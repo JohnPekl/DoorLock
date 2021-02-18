@@ -1,5 +1,6 @@
 package gist.mlv.doorlock;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
@@ -12,15 +13,18 @@ public class Device {
     private String WifiSSID;
     private String WifiPassword;
     private String IpAdress;
+    private String StreamingKey;
 
     public static String PREFERENCE = "MLV_Prefers";
 
-    public Device(String id, String user, String password){
+    public Device(String id, String user, String password) {
         UserName = user;
         ID = id;
         Password = password;
     }
-    public Device(){ }
+
+    public Device() {
+    }
 
     public String getID() {
         return ID;
@@ -78,11 +82,20 @@ public class Device {
         IpAdress = ipAdress;
     }
 
+    public String getStreamingKey() {
+        return StreamingKey;
+    }
+
+    public void setStreamingKey(String streamingKey) {
+        StreamingKey = streamingKey;
+    }
+
     /*https://code.tutsplus.com/tutorials/storing-data-securely-on-android--cms-30558
      * Since 6.0 Marshmallow, full-disk encryption is enabled by default, for devices with the capability.
      * Files and SharedPreferences that are saved by the app are automatically set with the MODE_PRIVATE constant.
      * This means the data can be accessed only by your own app. */
-    public void savePreferences(SharedPreferences prefs){
+    public void savePreferences(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(Device.PREFERENCE, Context.MODE_PRIVATE);
         SharedPreferences.Editor prefsEditor = prefs.edit();
         Gson gson = new Gson();
         String json = gson.toJson(this);
@@ -99,19 +112,19 @@ public class Device {
         return isEqual;
     }
 
-    public String connectLocal(){
+    public String getUrlLocal() {
         return "http://" + IpAdress + ":8555";
     }
 
-    public String connectMLV(){
-        return "http://" + IpAdress + ":8555";
+    public String getUrlMLV() {
+        return "http://mlv.co.kr/ict/showvid.php?devid=%27" + ID + "%27&key=%" + StreamingKey + "%27";
     }
 
-    public String checkDevice(){
+    public String getUrlcheckDevice() {
         return "http://" + IpAdress + ":8555/get_dev";
     }
 
-    public String changeWIFI(){
+    public String getUrlChangeWIFI() {
         return "http://" + IpAdress + ":8555/set_wifi?ssid=" + WifiSSID + "&password=" + WifiPassword;
     }
 }

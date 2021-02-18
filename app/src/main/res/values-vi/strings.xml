@@ -6,7 +6,7 @@
     <string name="device_name">Tên thiết bị</string>
     <string name="wifi_title">Thông tin cài đặt</string>
     <string name="wifi_name">Tên (SSID)</string>
-    <string name="wifi_pwd">Mật khẩu</string>
+    <string name="password">Mật khẩu</string>
     <string name="wifi_no_pwd">Không mật khẩu</string>
     <string name="wifi_check_ok">Đã kiểm tra! đúng thông tin và mật khẩu</string>
     <string name="wifi_check_no">Vui lòng kiểm tra lại SSID và mật khẩu</string>
@@ -22,6 +22,12 @@
     <string name="hint_device_name">Khóa thông minh</string>
     <string name="hint_wifi_ssid">mlv-door5g</string>
     <string name="hint_wifi_pwd">wlsfkaus</string>
+
+    <string name="username">Tên người dùng</string>
+    <string name="user_pwd">Cài đặt đăng nhập</string>
+    <string name="default_login">admin</string>
+    <string name="login_incorrect">Thông tin đăng nhập không đúng</string>
+    <string name="streaming_key">Streaming key</string>
 
     <string name="toast_save">Đã lưu thông tin cài đặt!</string>
     <string name="toast_exist">Thiết bị thêm vào đã tồn tại!</string>

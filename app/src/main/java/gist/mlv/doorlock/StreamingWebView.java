@@ -12,7 +12,7 @@ import android.webkit.WebViewClient;
 import androidx.annotation.Nullable;
 
 public class StreamingWebView extends Activity {
-
+    public static String INTENT_EXTRA = "StreamingWebView_Extra";
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,8 +26,8 @@ public class StreamingWebView extends Activity {
         WebView deviceWebView = findViewById(R.id.device_webview);
         WebSettings webSettings = deviceWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
-        String connect = "http://mlv.co.kr/ict/showvid.php?devid=%27000-000-000%27&key=%273030%27";
-                //getIntent().getStringExtra("EXTRA_SESSION_ID");
+        //String connect = "http://mlv.co.kr/ict/showvid.php?devid=%27000-000-000%27&key=%273030%27";
+        String connect = getIntent().getStringExtra(INTENT_EXTRA);
 
         deviceWebView.setWebViewClient(new WebViewClient() {
             public void onReceivedHttpAuthRequest(WebView view, HttpAuthHandler handler, String host, String realm) {

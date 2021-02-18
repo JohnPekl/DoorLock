@@ -6,7 +6,7 @@
     <string name="device_name">Device Name</string>
     <string name="wifi_title">Setup information</string>
     <string name="wifi_name">Name (SSID)</string>
-    <string name="wifi_pwd">Password</string>
+    <string name="password">Password</string>
     <string name="wifi_no_pwd">No Password</string>
     <string name="wifi_check_ok">Checked! Correct SSID and password</string>
     <string name="wifi_check_no">Please check your SSID and password, again!</string>
@@ -22,6 +22,12 @@
     <string name="hint_device_name">Smart Lock</string>
     <string name="hint_wifi_ssid">mlv-door5g</string>
     <string name="hint_wifi_pwd">wlsfkaus</string>
+
+    <string name="username">Username</string>
+    <string name="user_pwd">Login setup</string>
+    <string name="default_login">admin</string>
+    <string name="login_incorrect">Incorrect username or password</string>
+    <string name="streaming_key">Streaming key</string>
 
     <string name="toast_save">Setup Information Stored!</string>
     <string name="toast_exist">Device already addedd!</string>

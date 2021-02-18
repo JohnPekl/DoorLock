@@ -18,14 +18,14 @@ import java.nio.charset.StandardCharsets;
  Y – The type of the objects you are going to enter in the onProgressUpdate method.
  Z – The type of the result from the operations you have done in the background process.
  */
-public class HttpRequest{
+public class HttpRequest {
 
     private String TAG = "HTTPLogin";
 
-    public HttpRequest(){
+    public HttpRequest() {
     }
 
-    private String getHtmlLogin(String s){
+    private String getHtmlLogin(String s) {
         String token = "admin:admin";
         byte[] data = token.getBytes(StandardCharsets.UTF_8);
         String base64 = Base64.encodeToString(data, Base64.DEFAULT);
@@ -60,7 +60,7 @@ public class HttpRequest{
         return resBody;
     }
 
-    public String checkDevice(String url_s){ // checking whether a device is online, if it is online, return device ID
+    public String checkDevice(String url_s) { // checking whether a device is online, if it is online, return device ID
         URL url;
         HttpURLConnection urlConnection = null;
         int responseCode = 0;
@@ -94,43 +94,25 @@ public class HttpRequest{
         return resBody;
     }
 
-    public boolean credentialRequest(String[] urls){ // checking a match between IP and device ID
+    public boolean checkUserPassword(String url_s, String user, String pwd) {
         URL url;
         HttpURLConnection urlConnection = null;
         int responseCode = 0;
         String resBody = "";
         boolean isSuccess = false;
-        int timeout = 100;
+        int timeout = 500;
         try {
-            url = new URL(urls[0]);
+            String token = user + ":" + pwd;
+            byte[] data = token.getBytes(StandardCharsets.UTF_8);
+            String base64 = Base64.encodeToString(data, Base64.DEFAULT);
+            url = new URL(url_s);
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setConnectTimeout(timeout);
-            InputStream in = urlConnection.getInputStream();
-            responseCode = urlConnection.getResponseCode();
-            InputStreamReader isw = new InputStreamReader(in);
-            BufferedReader br = new BufferedReader(isw);
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = br.readLine()) != null) {
-                sb.append(line).append('\n');
-            }
-            resBody = sb.toString();
-            // send request change password
-            if(resBody.contains("True")){
-                String token = "admin:admin";
-                byte[] data = token.getBytes(StandardCharsets.UTF_8);
-                String base64 = Base64.encodeToString(data, Base64.DEFAULT);
-                url = new URL(urls[1]);//action url for example changing wifi etc. or open door
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setConnectTimeout(timeout);
-                urlConnection.setRequestProperty("Authorization", "Basic " + base64);
+            urlConnection.setRequestProperty("Authorization", "Basic " + base64);
 
-                if(urlConnection.getResponseCode() == 200){
-                    urlConnection.disconnect();
-                    isSuccess = true;
-                }
+            if (urlConnection.getResponseCode() == 200) {
+                isSuccess = true;
             }
-
         } catch (MalformedURLException e) {
             Log.e(TAG, e.getMessage());
         } catch (IOException e) {
@@ -140,7 +122,7 @@ public class HttpRequest{
                 urlConnection.disconnect();
             }
         }
-        Log.d(TAG, "checkDevice responseCode " + String.valueOf(responseCode));
+        Log.d(TAG, "checkUserPassword responseCode " + String.valueOf(responseCode));
         return isSuccess;
     }
 }

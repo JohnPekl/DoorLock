@@ -41,6 +41,7 @@ import com.google.gson.Gson;
 
 import java.net.Inet4Address;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -70,6 +71,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        mMainHandler = new Handler();
 
         mAddDevice = findViewById(R.id.btn_add_device);
         mDeviceListView = findViewById(R.id.device_list);
@@ -85,9 +87,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                             Manifest.permission.ACCESS_WIFI_STATE, Manifest.permission.INTERNET}, REQUEST_CODE);
         }
 
-        getAllPreferense();
         registerForContextMenu(mDeviceListView);
-        mMainHandler = new Handler();
 
         //scan devices
         mScanning = false;
@@ -110,7 +110,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private void getAllPreferense() {
         SharedPreferences prefs = getSharedPreferences(Device.PREFERENCE, Context.MODE_PRIVATE);
         mDeviceArrList = new ArrayList<Device>();
-        mDeviceAdapter = new DeviceAdapter(this, MainActivity.this, mDeviceArrList);
+        mDeviceAdapter = new DeviceAdapter(this, mMainHandler, mDeviceArrList);
         mDeviceListView.setAdapter(mDeviceAdapter);
         mDeviceListView.setDividerHeight(2);
 
@@ -124,8 +124,15 @@ public class MainActivity extends Activity implements View.OnClickListener {
             String json = prefs.getString(entry.getKey(), "");
             Device obj = gson.fromJson(json, Device.class);
             mDeviceArrList.add(obj);
-            mDeviceAdapter.notifyDataSetChanged();
         }
+        Comparator<Device> compareByIp = new Comparator<Device>() {
+            @Override
+            public int compare(Device o1, Device o2) {
+                return o1.getIpAdress().compareTo(o2.getIpAdress());
+            }
+        };
+        //Collections.sort(mDeviceArrList, compareByIp);
+        mDeviceAdapter.notifyDataSetChanged();
 
         prefs = getPreferences(Context.MODE_PRIVATE);
         String localeCode = prefs.getString(LANGUAGE_PREF, "en");
@@ -134,6 +141,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
         Configuration conf = res.getConfiguration();
         conf.setLocale(new Locale(localeCode.toLowerCase()));
         res.updateConfiguration(conf, dm);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        getAllPreferense();
     }
 
     @Override
@@ -283,7 +296,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
                         mDeviceArrList.set(position, device);
                         mDeviceAdapter.notifyDataSetChanged();
-                        device.savePreferences(context.getSharedPreferences(Device.PREFERENCE, Context.MODE_PRIVATE));
+                        device.savePreferences(context);
                         Toast.makeText(context, R.string.toast_update, Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -369,7 +382,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 }
                 mDeviceArrList.add(mDevice);
                 mDeviceAdapter.notifyDataSetChanged();
-                mDevice.savePreferences(getSharedPreferences(Device.PREFERENCE, Context.MODE_PRIVATE));
+                mDevice.savePreferences(MainActivity.this);
                 if (mDeviceListView.getVisibility() == View.GONE) {
                     mDeviceListView.setVisibility(View.VISIBLE);
                     mEmptyDeviceTxt.setVisibility(View.GONE);
@@ -433,7 +446,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         });
 
         for (int i = 0; i <= 255; i++) {
-            if(mScanning){//stop scanning if activity is onStop
+            if (mScanning) {//stop scanning if activity is onStop
                 break;
             }
             String nextIp = prefix + i;
@@ -458,7 +471,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             if (!result.equals("")) {
                 mDevice = new Device(result, "", "");
                 mDevice.setIpAdress(nextIp);
-                mDevice.setName(context.getString(R.string.hint_device_name));
+                mDevice.setName(context.getString(R.string.hint_device_name) + " " + (mDeviceArrList.size() + 1));
                 mDeviceArrList.add(mDevice);
                 mMainHandler.post(new Runnable() {
                     @Override
@@ -470,7 +483,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         mDeviceAdapter.notifyDataSetChanged();
                     }
                 });
-                mDevice.savePreferences(context.getSharedPreferences(Device.PREFERENCE, Context.MODE_PRIVATE));
+                mDevice.savePreferences(context);
             }
             final int progress = i;
             mMainHandler.post(new Runnable() {
