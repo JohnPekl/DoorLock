@@ -62,7 +62,7 @@ public class DeviceAdapter extends ArrayAdapter<Device> implements View.OnClickL
             case R.id.lv_btn_stream:
                 Device stream = getItem(position);
                 Intent iStream = new Intent(getContext(), StreamingWebView.class);
-                iStream.putExtra("EXTRA_SESSION_ID", stream.connectLocal());
+                iStream.putExtra("EXTRA_SESSION_ID", stream.connectMLV());
                 mMainActivity.overridePendingTransition(R.anim.fadein, R.anim.fadeout);
                 mMainActivity.startActivity(iStream);
                 break;

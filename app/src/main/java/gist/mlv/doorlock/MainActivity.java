@@ -312,10 +312,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    /*https://code.tutsplus.com/tutorials/storing-data-securely-on-android--cms-30558
-     * Since 6.0 Marshmallow, full-disk encryption is enabled by default, for devices with the capability.
-     * Files and SharedPreferences that are saved by the app are automatically set with the MODE_PRIVATE constant.
-     * This means the data can be accessed only by your own app. */
     private void showWIFIDialog() {
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View view = layoutInflater.inflate(R.layout.input_wifi_info, null);
@@ -437,7 +433,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         });
 
         for (int i = 0; i <= 255; i++) {
-            if(mScanning){
+            if(mScanning){//stop scanning if activity is onStop
                 break;
             }
             String nextIp = prefix + i;

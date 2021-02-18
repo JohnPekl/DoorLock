@@ -78,6 +78,10 @@ public class Device {
         IpAdress = ipAdress;
     }
 
+    /*https://code.tutsplus.com/tutorials/storing-data-securely-on-android--cms-30558
+     * Since 6.0 Marshmallow, full-disk encryption is enabled by default, for devices with the capability.
+     * Files and SharedPreferences that are saved by the app are automatically set with the MODE_PRIVATE constant.
+     * This means the data can be accessed only by your own app. */
     public void savePreferences(SharedPreferences prefs){
         SharedPreferences.Editor prefsEditor = prefs.edit();
         Gson gson = new Gson();
@@ -96,16 +100,15 @@ public class Device {
     }
 
     public String connectLocal(){
-        //return "http://" + IpAdress + ":8555";
-        return "http://172.26.19.213:8555";
-    }
-
-    public String checkDevice(){
-        return "http://" + IpAdress + ":8555/get_dev";
+        return "http://" + IpAdress + ":8555";
     }
 
     public String connectMLV(){
         return "http://" + IpAdress + ":8555";
+    }
+
+    public String checkDevice(){
+        return "http://" + IpAdress + ":8555/get_dev";
     }
 
     public String changeWIFI(){
