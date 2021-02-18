@@ -100,7 +100,15 @@ public class Device {
         return "http://172.26.19.213:8555";
     }
 
+    public String checkDevice(){
+        return "http://" + IpAdress + ":8555/get_dev";
+    }
+
     public String connectMLV(){
         return "http://" + IpAdress + ":8555";
+    }
+
+    public String changeWIFI(){
+        return "http://" + IpAdress + ":8555/set_wifi?ssid=" + WifiSSID + "&password=" + WifiPassword;
     }
 }

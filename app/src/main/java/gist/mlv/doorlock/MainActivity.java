@@ -3,7 +3,6 @@ package gist.mlv.doorlock;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -34,6 +33,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,6 +58,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private ImageButton mAddDevice;
     private Device mDevice;
+    private ProgressBar mProgressScan;
     private Handler mMainHandler;
     private TextView mEmptyDeviceTxt;
     private ListView mDeviceListView;
@@ -74,6 +75,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mEmptyDeviceTxt = findViewById(R.id.empty_device_list);
         mAddDevice.setOnClickListener(this);
         findViewById(R.id.imb_setting).setOnClickListener(this);
+        mProgressScan = findViewById(R.id.pgb_scan_device);
 
         if (!requestPermission(Manifest.permission.CAMERA)) {
             int REQUEST_CODE = 1001;
@@ -85,6 +87,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
         getAllPreferense();
         registerForContextMenu(mDeviceListView);
         mMainHandler = new Handler();
+
+        //scan devices
+        (new Thread(){
+            @Override
+            public void run() {
+                scanLocalWifi(MainActivity.this);
+            }
+        }).start();
     }
 
     private boolean requestPermission(String permission) {
@@ -359,29 +369,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     mEmptyDeviceTxt.setVisibility(View.GONE);
                 }
 
-                final String ssid_t = ssid;
-                final String password_t = pwd;
-                final Context context_t = MainActivity.this;
-                final ProgressDialog progressBar = new ProgressDialog(context_t);
-                progressBar.setCancelable(false);//you can cancel it by pressing back button
-                progressBar.setMessage(getString(R.string.progress_connect_wifi));
-                progressBar.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                progressBar.setProgress(0);//initially progress is 0
-                progressBar.setMax(100);//sets the maximum value 100
-                progressBar.show();//displays the progress bar
-
-                (new Thread() {
-                    @Override
-                    public void run() {
-                        connect2Wifi(context_t, ssid_t, password_t);
-                        try {
-                            sleep(3000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        scanLocalWifi(context_t, progressBar);
-                    }
-                }).start();
                 alertDialog.dismiss();
                 Toast.makeText(MainActivity.this, R.string.toast_save, Toast.LENGTH_SHORT).show();
             }
@@ -406,7 +393,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         //boolean result = wifiManager.reconnect();
     }
 
-    private void scanLocalWifi(final Context context, final ProgressDialog progressBar) {
+    private void scanLocalWifi(final Context context) {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         Network[] networks = cm.getAllNetworks();
         String gateway = "";
@@ -429,55 +416,63 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
 
         HttpRequest http = new HttpRequest();
-        boolean result = true; // true for test
+        String result = "";
         String prefix = myIp.substring(0, myIp.lastIndexOf(".") + 1);
 
-        displayProgressUI(context, progressBar, context.getString(R.string.progress_scan));
+        mMainHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                mProgressScan.setVisibility(View.VISIBLE);
+            }
+        });
+
         for (int i = 0; i <= 255; i++) {
             String nextIp = prefix + i;
             if(nextIp.equals(myIp) || nextIp.equals(gateway)){
                 continue;
             }
             //
-            displayProgressUI(context, progressBar, context.getString(R.string.progress_scan) + "\n" + nextIp);
-            String checkDevice = "http://" + nextIp + ":8555/?check_dev=" + mDevice.getID();
-            checkDevice = "http://172.126.19.213:8555/?check_dev=000-000-000";
-            String changeWifi = "http://" + nextIp + ":8555/set_wifi?ssid=" + mDevice.getWifiSSID() + "&password=" + mDevice.getWifiPassword();
-            changeWifi = "http://172.126.19.213:8555/set_wifi?ssid=mlv-306&password=wlsfkaus";
-            String[] params = new String[]{checkDevice, changeWifi};
-            result = http.configDevice(params);
-            if (result) {
-                mDevice.setIpAdress("172.26.19.213"); //nextIp
-                mDevice.savePreferences(context.getSharedPreferences(Device.PREFERENCE, Context.MODE_PRIVATE));
-                makeToastUI(context, R.string.toast_config);
-                break;
-            }
-        }
-        displayProgressUI(context, progressBar, "");
-        if (!result){
-            makeToastUI(context, R.string.toast_config_error);
-        }
-    }
+            String getDevice = "http://" + nextIp + ":8555/get_dev";
+            result = http.checkDevice(getDevice);
 
-    private void makeToastUI(final Context context, final int s){
-        mMainHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private void displayProgressUI(final Context context, final ProgressDialog progressBar, final String s){
-        mMainHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                if(s.equals("")){
-                    progressBar.dismiss();
-                } else {
-                    progressBar.setMessage(s);
+            boolean alreadyStored = false;
+            for(int idx = 0; idx < mDeviceArrList.size(); idx++){
+                if(mDeviceArrList.get(idx).getID().equals(result)){
+                    alreadyStored = true;
+                    break; // ignore if it is already stored
                 }
             }
-        });
+            if(alreadyStored){
+                continue;
+            }
+
+            if (!result.equals("")) {
+                mDevice = new Device(result, "", "");
+                mDevice.setIpAdress(nextIp);
+                mDevice.setName(context.getString(R.string.hint_device_name));
+                mDeviceArrList.add(mDevice);
+                mMainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(mDeviceListView.getVisibility()==View.GONE){
+                            mEmptyDeviceTxt.setVisibility(View.GONE);
+                            mDeviceListView.setVisibility(View.VISIBLE);
+                        }
+                        mDeviceAdapter.notifyDataSetChanged();
+                    }
+                });
+                mDevice.savePreferences(context.getSharedPreferences(Device.PREFERENCE, Context.MODE_PRIVATE));
+            }
+            final int progress = i;
+            mMainHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mProgressScan.setProgress((int) ((progress + 1)*100/255));
+                    if(mProgressScan.getProgress() == mProgressScan.getMax()){
+                        mProgressScan.setVisibility(View.GONE);
+                    }
+                }
+            });
+        }
     }
 }

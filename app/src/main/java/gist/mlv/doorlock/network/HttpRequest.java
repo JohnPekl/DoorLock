@@ -60,16 +60,51 @@ public class HttpRequest{
         return resBody;
     }
 
-    public boolean configDevice(String[] urls){ // checking a match between IP and device ID
+    public String checkDevice(String url_s){ // checking whether a device is online, if it is online, return device ID
+        URL url;
+        HttpURLConnection urlConnection = null;
+        int responseCode = 0;
+        String resBody = "";
+        int timeout = 100;
+        try {
+            url = new URL(url_s);
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setConnectTimeout(timeout);
+            InputStream in = urlConnection.getInputStream();
+            responseCode = urlConnection.getResponseCode();
+            InputStreamReader isw = new InputStreamReader(in);
+            BufferedReader br = new BufferedReader(isw);
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = br.readLine()) != null) {
+                sb.append(line).append('\n');
+            }
+            resBody = sb.toString();
+
+        } catch (MalformedURLException e) {
+            Log.e(TAG, e.getMessage());
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage());
+        } finally {
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
+        }
+        Log.d(TAG, "checkDevice responseCode " + String.valueOf(responseCode));
+        return resBody;
+    }
+
+    public boolean credentialRequest(String[] urls){ // checking a match between IP and device ID
         URL url;
         HttpURLConnection urlConnection = null;
         int responseCode = 0;
         String resBody = "";
         boolean isSuccess = false;
+        int timeout = 100;
         try {
             url = new URL(urls[0]);
             urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setConnectTimeout(3000);
+            urlConnection.setConnectTimeout(timeout);
             InputStream in = urlConnection.getInputStream();
             responseCode = urlConnection.getResponseCode();
             InputStreamReader isw = new InputStreamReader(in);
@@ -87,7 +122,7 @@ public class HttpRequest{
                 String base64 = Base64.encodeToString(data, Base64.DEFAULT);
                 url = new URL(urls[1]);//action url for example changing wifi etc. or open door
                 urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setConnectTimeout(3000);
+                urlConnection.setConnectTimeout(timeout);
                 urlConnection.setRequestProperty("Authorization", "Basic " + base64);
 
                 if(urlConnection.getResponseCode() == 200){

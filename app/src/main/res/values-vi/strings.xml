@@ -19,7 +19,7 @@
     <string name="connect">Kết nối</string>
     <string name="stream">Trực tuyến</string>
     <string name="delete">Xóa</string>
-    <string name="hint_device_name">MLV Smart</string>
+    <string name="hint_device_name">Khóa thông minh</string>
     <string name="hint_wifi_ssid">mlv-door5g</string>
     <string name="hint_wifi_pwd">wlsfkaus</string>
 
@@ -30,7 +30,7 @@
     <string name="toast_update">Đã cập nhật thông tin cài đặt!</string>
     <string name="toast_delete">Thông tin cài đặt đã xóa!</string>
     <string name="toast_config">Cấu hình thiết bị thành công!</string>
-    <string name="toast_config_error">Cấu hình thất bại, kiểm tra lại mật khẩu WIFI</string>
+    <string name="toast_no_device">Không có thiết bị nào hiện có trong mạng WIFI</string>
 
     <string name="progress_connect_wifi">Kết nối tới thiết bị WIFI của bạn</string>
     <string name="progress_scan">Đang tìm kiếm thiết bị của bạn</string>
