@@ -65,7 +65,7 @@ public class HttpRequest{
         HttpURLConnection urlConnection = null;
         int responseCode = 0;
         String resBody = "";
-        int timeout = 100;
+        int timeout = 500;
         try {
             url = new URL(url_s);
             urlConnection = (HttpURLConnection) url.openConnection();

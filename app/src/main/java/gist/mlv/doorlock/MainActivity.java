@@ -59,6 +59,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private ImageButton mAddDevice;
     private Device mDevice;
     private ProgressBar mProgressScan;
+    private boolean mScanning;
     private Handler mMainHandler;
     private TextView mEmptyDeviceTxt;
     private ListView mDeviceListView;
@@ -89,7 +90,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mMainHandler = new Handler();
 
         //scan devices
-        (new Thread(){
+        mScanning = false;
+        (new Thread() {
             @Override
             public void run() {
                 scanLocalWifi(MainActivity.this);
@@ -140,6 +142,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        mScanning = true; // the activity is no longer visible, stop scanning
+    }
+
+    @Override
     public void onClick(View view) {
         Context context = MainActivity.this;
         switch (view.getId()) {
@@ -182,7 +190,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    private void setAppLocale(String localeCode){
+    private void setAppLocale(String localeCode) {
         Resources res = getResources();
         DisplayMetrics dm = res.getDisplayMetrics();
         Configuration conf = res.getConfiguration();
@@ -190,14 +198,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
             LocaleList ll = conf.getLocales();
-            for(int i=0; i<ll.size(); i++){
-                if(!ll.get(i).getCountry().equals(localeCode)){
+            for (int i = 0; i < ll.size(); i++) {
+                if (!ll.get(i).getCountry().equals(localeCode)) {
                     conf.setLocale(new Locale(localeCode.toLowerCase()));
                 }
             }
         } else {
             Locale locale = context.getResources().getConfiguration().locale;
-            if(!locale.getCountry().equals(localeCode)){
+            if (!locale.getCountry().equals(localeCode)) {
                 conf.setLocale(new Locale(localeCode.toLowerCase()));
             }
         }
@@ -214,12 +222,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     }
+
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.edit_delete, menu);
     }
+
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
@@ -245,10 +255,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 final Device device = mDeviceArrList.get(position);
                 edt_ssid.setText(device.getWifiSSID());
                 edt_name.setText(device.getName());
-                if(device.getWifiPassword().length() == 0){
+                if (device.getWifiPassword().length() == 0) {
                     cbx.setChecked(true);
                     pwd_layout.setVisibility(View.GONE);
-                } else{
+                } else {
                     edt_password.setText(device.getWifiPassword());
                 }
                 alertDialog.setView(view);
@@ -296,7 +306,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 mDeviceArrList.remove(device_del);
                 mDeviceAdapter.notifyDataSetChanged();
                 Toast.makeText(context, R.string.toast_delete, Toast.LENGTH_SHORT).show();
-                return  true;
+                return true;
             default:
                 return super.onContextItemSelected(item);
         }
@@ -427,8 +437,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
         });
 
         for (int i = 0; i <= 255; i++) {
+            if(mScanning){
+                break;
+            }
             String nextIp = prefix + i;
-            if(nextIp.equals(myIp) || nextIp.equals(gateway)){
+            if (nextIp.equals(myIp) || nextIp.equals(gateway)) {
                 continue;
             }
             //
@@ -436,13 +449,13 @@ public class MainActivity extends Activity implements View.OnClickListener {
             result = http.checkDevice(getDevice);
 
             boolean alreadyStored = false;
-            for(int idx = 0; idx < mDeviceArrList.size(); idx++){
-                if(mDeviceArrList.get(idx).getID().equals(result)){
+            for (int idx = 0; idx < mDeviceArrList.size(); idx++) {
+                if (mDeviceArrList.get(idx).getID().equals(result)) {
                     alreadyStored = true;
                     break; // ignore if it is already stored
                 }
             }
-            if(alreadyStored){
+            if (alreadyStored) {
                 continue;
             }
 
@@ -454,7 +467,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 mMainHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        if(mDeviceListView.getVisibility()==View.GONE){
+                        if (mDeviceListView.getVisibility() == View.GONE) {
                             mEmptyDeviceTxt.setVisibility(View.GONE);
                             mDeviceListView.setVisibility(View.VISIBLE);
                         }
@@ -467,8 +480,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
             mMainHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    mProgressScan.setProgress((int) ((progress + 1)*100/255));
-                    if(mProgressScan.getProgress() == mProgressScan.getMax()){
+                    mProgressScan.setProgress((int) ((progress + 1) * 100 / 255));
+                    if (mProgressScan.getProgress() == mProgressScan.getMax()) {
                         mProgressScan.setVisibility(View.GONE);
                     }
                 }
