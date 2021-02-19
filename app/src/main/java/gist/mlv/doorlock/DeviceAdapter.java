@@ -48,6 +48,8 @@ public class DeviceAdapter extends ArrayAdapter<Device> implements View.OnClickL
         // Populate the data into the template view using the data object
         if (device.getUserName().equals("")){
             btnStream.setEnabled(false);
+        } else {
+            btnStream.setEnabled(true);
         }
         tvName.setText(device.getName());
         btnConnect.setOnClickListener(this);

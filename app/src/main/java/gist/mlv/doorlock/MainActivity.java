@@ -41,6 +41,7 @@ import com.google.gson.Gson;
 
 import java.net.Inet4Address;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -122,7 +123,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 return o1.getIpAdress().compareTo(o2.getIpAdress());
             }
         };
-        //Collections.sort(mDeviceArrList, compareByIp);
+        Collections.sort(mDeviceArrList, compareByIp);
         mDeviceAdapter.notifyDataSetChanged();
 
         prefs = getPreferences(Context.MODE_PRIVATE);
