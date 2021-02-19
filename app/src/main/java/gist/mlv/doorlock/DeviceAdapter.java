@@ -80,7 +80,7 @@ public class DeviceAdapter extends ArrayAdapter<Device> implements View.OnClickL
                 final Device stream = getItem(position);
                 final Intent iStream = new Intent(getContext(), StreamingWebView.class);
 
-                if(stream.getStreamingKey().equals("")) {
+                if(stream.getStreamingKey() == null) {
                     LayoutInflater layoutInflater = (LayoutInflater) mMainActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                     View view_streamingkey = layoutInflater.inflate(R.layout.streaming_key, null);
                     final AlertDialog alertDialog = new AlertDialog.Builder(mMainActivity).create();
