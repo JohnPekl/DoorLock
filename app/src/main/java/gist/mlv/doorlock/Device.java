@@ -117,7 +117,7 @@ public class Device {
     }
 
     public String getUrlMLV() {
-        return "http://mlv.co.kr/ict/showvid.php?devid=" + ID + "&key=" + StreamingKey;
+        return "http://mlv.co.kr/ict/showvid.php?devid='" + ID + "'&key='" + StreamingKey+"'";
     }
 
     public String getUrlcheckDevice() {

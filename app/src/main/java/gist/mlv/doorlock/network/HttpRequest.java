@@ -91,7 +91,7 @@ public class HttpRequest {
             }
         }
         Log.d(TAG, "checkDevice responseCode " + String.valueOf(responseCode));
-        return resBody;
+        return resBody.replace("\n", "");
     }
 
     public boolean checkUserPassword(String url_s, String user, String pwd) {
