@@ -88,15 +88,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
 
         registerForContextMenu(mDeviceListView);
-
-        //scan devices
-        mScanning = false;
-        (new Thread() {
-            @Override
-            public void run() {
-                scanLocalWifi(MainActivity.this);
-            }
-        }).start();
     }
 
     private boolean requestPermission(String permission) {
@@ -147,6 +138,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
     protected void onStart() {
         super.onStart();
         getAllPreferense();
+        //scan devices
+        mScanning = false;
+        (new Thread() {
+            @Override
+            public void run() {
+                scanLocalWifi(MainActivity.this);
+            }
+        }).start();
     }
 
     @Override
