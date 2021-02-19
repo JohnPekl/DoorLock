@@ -13,22 +13,23 @@ import androidx.annotation.Nullable;
 
 public class DeviceWebView extends Activity {
     public static String INTENT_EXTRA = "DeviceWebView_Extra";
+    private WebView mWebView;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.device_view);
 
-        WebView deviceWebView = findViewById(R.id.device_webview);
-        WebSettings webSettings = deviceWebView.getSettings();
+        mWebView = findViewById(R.id.device_webview);
+        WebSettings webSettings = mWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         String json = getIntent().getStringExtra(INTENT_EXTRA);
         Device connect= (new Gson()).fromJson(json, Device.class);
 
-        deviceWebView.setWebViewClient(new WebViewClient() {
+        mWebView.setWebViewClient(new WebViewClient() {
             public void onReceivedHttpAuthRequest(WebView view, HttpAuthHandler handler, String host, String realm) {
                 handler.proceed("admin", "admin");
             }
         });
-        deviceWebView.loadUrl(connect.getUrlLocal());
+        mWebView.loadUrl(connect.getUrlLocal());
     }
 }

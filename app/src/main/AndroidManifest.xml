@@ -19,8 +19,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".DeviceWebView"></activity>
-        <activity android:name=".StreamingWebView"></activity>
+        <activity
+            android:name=".StreamingWebView"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"></activity>
     </application>
+
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
