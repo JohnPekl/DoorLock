@@ -15,6 +15,7 @@ import android.net.LinkProperties;
 import android.net.Network;
 import android.net.RouteInfo;
 import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -81,11 +82,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
         findViewById(R.id.imb_setting).setOnClickListener(this);
         mProgressScan = findViewById(R.id.pgb_scan_device);
 
-        if (!requestPermission(Manifest.permission.CAMERA)) {
+        if (!requestPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
             int REQUEST_CODE = 1001;
             ActivityCompat.requestPermissions(MainActivity.this,
-                    new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE,
-                            Manifest.permission.ACCESS_WIFI_STATE, Manifest.permission.INTERNET}, REQUEST_CODE);
+                    new String[]{Manifest.permission.ACCESS_WIFI_STATE, Manifest.permission.INTERNET,
+                            Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
         }
 
         registerForContextMenu(mDeviceListView);
@@ -413,6 +414,18 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
     private void scanLocalWifi(final Context context) {
+        boolean isWifiConnected = false;
+        WifiManager wifiMgr = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        if (wifiMgr.isWifiEnabled()) { // Wi-Fi adapter is ON
+            WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
+            if( wifiInfo.getNetworkId() != -1 ){ // require ACCESS_FINE_LOCATION permission
+                isWifiConnected = true; // // Connected to an access point
+            }
+        }
+        if(!isWifiConnected){
+            return;
+        }
+
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         Network[] networks = cm.getAllNetworks();
         String gateway = "";
