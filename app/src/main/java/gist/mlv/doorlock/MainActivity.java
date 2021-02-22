@@ -25,7 +25,10 @@ import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -58,9 +61,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
      */
     private String TAG = "MainActivity";
     private String LANGUAGE_PREF = "LANGUAGE_PREF";
+    private static final int MIN_DISTANCE = 50;
+    private float mStartY, mEndY;
 
     private ImageButton mAddDevice;
-    private Device mDevice;
     private ProgressBar mProgressScan;
     private boolean mScanning;
     private Handler mMainHandler;
@@ -68,6 +72,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private ListView mDeviceListView;
     private ArrayList<Device> mDeviceArrList;
     private ArrayAdapter<Device> mDeviceAdapter;
+    private Comparator<Device> mCompareDeviceByIp;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -77,6 +82,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         mAddDevice = findViewById(R.id.btn_add_device);
         mDeviceListView = findViewById(R.id.device_list);
+        mDeviceListView.setDividerHeight(2);
         mEmptyDeviceTxt = findViewById(R.id.empty_device_list);
         mAddDevice.setOnClickListener(this);
         findViewById(R.id.imb_setting).setOnClickListener(this);
@@ -104,8 +110,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         SharedPreferences prefs = getSharedPreferences(Device.PREFERENCE, Context.MODE_PRIVATE);
         mDeviceArrList = new ArrayList<Device>();
         mDeviceAdapter = new DeviceAdapter(this, mMainHandler, mDeviceArrList);
-        mDeviceListView.setAdapter(mDeviceAdapter);
-        mDeviceListView.setDividerHeight(2);
 
         Map<String, ?> allEntries = prefs.getAll();
         if (allEntries.size() > 0) {
@@ -116,16 +120,28 @@ public class MainActivity extends Activity implements View.OnClickListener {
             Gson gson = new Gson();
             String json = prefs.getString(entry.getKey(), "");
             Device obj = gson.fromJson(json, Device.class);
+            HttpRequest http = new HttpRequest();
+            if (http.checkDevice(obj.getUrlCheckDevice()).equals(obj.getId())) {
+                obj.setLocalOnline(true);
+            } else {
+                obj.setLocalOnline(false);
+            }
             mDeviceArrList.add(obj);
         }
-        Comparator<Device> compareByIp = new Comparator<Device>() {
+        mCompareDeviceByIp = new Comparator<Device>() {
             @Override
             public int compare(Device o1, Device o2) {
                 return o1.getIpAdress().compareTo(o2.getIpAdress());
             }
         };
-        Collections.sort(mDeviceArrList, compareByIp);
-        mDeviceAdapter.notifyDataSetChanged();
+        Collections.sort(mDeviceArrList, mCompareDeviceByIp);
+        mMainHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                mDeviceListView.setAdapter(mDeviceAdapter);
+                mDeviceAdapter.notifyDataSetChanged();
+            }
+        });
 
         prefs = getPreferences(Context.MODE_PRIVATE);
         String localeCode = prefs.getString(LANGUAGE_PREF, "en");
@@ -139,12 +155,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onStart() {
         super.onStart();
-        getAllPreferense();
         //scan devices
         mScanning = false;
         (new Thread() {
             @Override
             public void run() {
+                getAllPreferense();
                 scanLocalWifi(MainActivity.this);
             }
         }).start();
@@ -166,7 +182,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         Context context = MainActivity.this;
         switch (view.getId()) {
             case R.id.btn_add_device:
-                mDevice = new Device("000-000-000" + Math.random(), "admin", "admin");
                 showWIFIDialog();
                 //connect2Wifi("mlv-door5g", "wlsfkaus");
                 break;
@@ -231,10 +246,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         Intent intent = getIntent();
         finish();
         startActivity(intent);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     }
 
     @Override
@@ -316,7 +327,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             case R.id.menu_delete:
                 Device device_del = mDeviceArrList.get(position);
                 SharedPreferences.Editor editor = context.getSharedPreferences(Device.PREFERENCE, Context.MODE_PRIVATE).edit();
-                editor.remove(device_del.getID()).apply();
+                editor.remove(device_del.getId()).apply();
                 mDeviceArrList.remove(device_del);
                 mDeviceAdapter.notifyDataSetChanged();
                 Toast.makeText(context, R.string.toast_delete, Toast.LENGTH_SHORT).show();
@@ -324,6 +335,36 @@ public class MainActivity extends Activity implements View.OnClickListener {
             default:
                 return super.onContextItemSelected(item);
         }
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                mStartY = event.getY();
+                break;
+            case MotionEvent.ACTION_UP:
+                mEndY = event.getY();
+                float deltaX = mEndY - mStartY;
+                System.out.println(deltaX + "--------------------------------");
+                if (Math.abs(deltaX) > MIN_DISTANCE) {
+                    Animation slide_down = AnimationUtils.loadAnimation(getApplicationContext(),
+                            R.anim.slide_down);
+                    mDeviceListView.startAnimation(slide_down);
+                    if (mProgressScan.getVisibility() == View.GONE) {
+                        mScanning = false;
+                        (new Thread() {
+                            @Override
+                            public void run() {
+                                getAllPreferense();
+                                scanLocalWifi(MainActivity.this);
+                            }
+                        }).start();
+                    }
+                }
+                break;
+        }
+        return super.onTouchEvent(event);
     }
 
     private void showWIFIDialog() {
@@ -373,17 +414,18 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     Toast.makeText(MainActivity.this, R.string.toast_len, Toast.LENGTH_SHORT).show();
                     return;
                 }
-
-                mDevice.setName(device_name);
-                mDevice.setWifiSSID(ssid);
-                mDevice.setWifiPassword(pwd);
-                if (mDeviceArrList.contains(mDevice)) { // checking whether device is added or not
+                Device device = new Device("000-000-000" + Math.random(), "admin", "admin");
+                device.setIpAdress("192.168.0.99");
+                device.setName(device_name);
+                device.setWifiSSID(ssid);
+                device.setWifiPassword(pwd);
+                if (mDeviceArrList.contains(device)) { // checking whether device is added or not
                     Toast.makeText(MainActivity.this, R.string.toast_exist, Toast.LENGTH_SHORT).show();
                     return;
                 }
-                mDeviceArrList.add(mDevice);
+                mDeviceArrList.add(device);
                 mDeviceAdapter.notifyDataSetChanged();
-                mDevice.savePreferences(MainActivity.this);
+                device.savePreferences(MainActivity.this);
                 if (mDeviceListView.getVisibility() == View.GONE) {
                     mDeviceListView.setVisibility(View.VISIBLE);
                     mEmptyDeviceTxt.setVisibility(View.GONE);
@@ -418,11 +460,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
         WifiManager wifiMgr = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         if (wifiMgr.isWifiEnabled()) { // Wi-Fi adapter is ON
             WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
-            if( wifiInfo.getNetworkId() != -1 ){ // require ACCESS_FINE_LOCATION permission
+            if (wifiInfo.getNetworkId() != -1) { // require ACCESS_FINE_LOCATION permission
                 isWifiConnected = true; // // Connected to an access point
             }
         }
-        if(!isWifiConnected){
+        if (!isWifiConnected) {
             return;
         }
 
@@ -472,7 +514,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
             boolean alreadyStored = false;
             for (int idx = 0; idx < mDeviceArrList.size(); idx++) {
-                if (mDeviceArrList.get(idx).getID().equals(result)) {
+                if (mDeviceArrList.get(idx).getId().equals(result)) {
                     alreadyStored = true;
                     break; // ignore if it is already stored
                 }
@@ -482,10 +524,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
             }
 
             if (!result.equals("")) {
-                mDevice = new Device(result, "", "");
-                mDevice.setIpAdress(nextIp);
-                mDevice.setName(context.getString(R.string.hint_device_name) + " " + (mDeviceArrList.size() + 1));
-                mDeviceArrList.add(mDevice);
+                Device device = new Device(result, "", "");
+                device.setIpAdress(nextIp);
+                device.setLocalOnline(true);
+                device.setName(context.getString(R.string.hint_device_name) + " " + (mDeviceArrList.size() + 1));
+                mDeviceArrList.add(device);
+                Collections.sort(mDeviceArrList, mCompareDeviceByIp);
                 mMainHandler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -496,7 +540,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         mDeviceAdapter.notifyDataSetChanged();
                     }
                 });
-                mDevice.savePreferences(context);
+                device.savePreferences(context);
             }
             final int progress = i;
             mMainHandler.post(new Runnable() {

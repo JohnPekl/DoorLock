@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,10 +49,15 @@ public class DeviceAdapter extends ArrayAdapter<Device> implements View.OnClickL
         Button btnConnect = (Button) convertView.findViewById(R.id.lv_btn_connect);
         Button btnStream = (Button) convertView.findViewById(R.id.lv_btn_stream);
         // Populate the data into the template view using the data object
-        if (device.getUserName().equals("")){
+        if (device.getUserName().equals("") || !hasInternetConnection(mMainActivity)){
             btnStream.setEnabled(false);
         } else {
             btnStream.setEnabled(true);
+        }
+        if (device.getLocalOnline()){
+            btnConnect.setEnabled(true);
+        } else {
+            btnConnect.setEnabled(false);
         }
         tvName.setText(device.getName());
         btnConnect.setOnClickListener(this);
@@ -164,5 +172,16 @@ public class DeviceAdapter extends ArrayAdapter<Device> implements View.OnClickL
         });
         alertDialog.setView(view_login);
         alertDialog.show();
+    }
+
+    private boolean hasInternetConnection(Context context) {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        Network network = connectivityManager.getActiveNetwork();
+        NetworkCapabilities capabilities = connectivityManager
+                .getNetworkCapabilities(network);
+
+        return capabilities != null
+                && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED);
     }
 }

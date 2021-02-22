@@ -6,88 +6,97 @@ import android.content.SharedPreferences;
 import com.google.gson.Gson;
 
 public class Device {
-    private String ID;
-    private String Name;
-    private String UserName;
-    private String Password;
-    private String WifiSSID;
-    private String WifiPassword;
-    private String IpAdress;
-    private String StreamingKey;
+    private String id;
+    private String name;
+    private String userName;
+    private String password;
+    private String wifiSSID;
+    private String wifiPassword;
+    private String ipAdress;
+    private String streamingKey;
+    private boolean isLocalOnline;
 
     public static String PREFERENCE = "MLV_Prefers";
 
     public Device(String id, String user, String password) {
-        UserName = user;
-        ID = id;
-        Password = password;
+        userName = user;
+        this.id = id;
+        this.password = password;
     }
 
     public Device() {
     }
 
-    public String getID() {
-        return ID;
+    public String getId() {
+        return id;
     }
 
-    public void setID(String ID) {
-        this.ID = ID;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getUserName() {
-        return UserName;
+        return userName;
     }
 
     public void setUserName(String userName) {
-        UserName = userName;
+        this.userName = userName;
     }
 
     public String getPassword() {
-        return Password;
+        return password;
     }
 
     public void setPassword(String password) {
-        Password = password;
+        this.password = password;
     }
 
     public String getWifiSSID() {
-        return WifiSSID;
+        return wifiSSID;
     }
 
     public void setWifiSSID(String wifiSSID) {
-        WifiSSID = wifiSSID;
+        this.wifiSSID = wifiSSID;
     }
 
     public String getWifiPassword() {
-        return WifiPassword;
+        return wifiPassword;
     }
 
     public void setWifiPassword(String wifiPassword) {
-        WifiPassword = wifiPassword;
+        this.wifiPassword = wifiPassword;
     }
 
     public String getName() {
-        return Name;
+        return name;
     }
 
     public void setName(String name) {
-        Name = name;
+        this.name = name;
     }
 
     public String getIpAdress() {
-        return IpAdress;
+        return ipAdress;
     }
 
     public void setIpAdress(String ipAdress) {
-        IpAdress = ipAdress;
+        this.ipAdress = ipAdress;
     }
 
     public String getStreamingKey() {
-        return StreamingKey;
+        return streamingKey;
     }
 
     public void setStreamingKey(String streamingKey) {
-        StreamingKey = streamingKey;
+        this.streamingKey = streamingKey;
+    }
+
+    public boolean getLocalOnline() {
+        return isLocalOnline;
+    }
+
+    public void setLocalOnline(boolean online) {
+        isLocalOnline = online;
     }
 
     /*https://code.tutsplus.com/tutorials/storing-data-securely-on-android--cms-30558
@@ -99,7 +108,7 @@ public class Device {
         SharedPreferences.Editor prefsEditor = prefs.edit();
         Gson gson = new Gson();
         String json = gson.toJson(this);
-        prefsEditor.putString(ID, json);
+        prefsEditor.putString(id, json);
         prefsEditor.commit();
     }
 
@@ -107,24 +116,24 @@ public class Device {
     public boolean equals(Object object) {
         boolean isEqual = false;
         if (object != null && object instanceof Device) {
-            isEqual = (this.ID.equals(((Device) object).getID()));
+            isEqual = (this.id.equals(((Device) object).getId()));
         }
         return isEqual;
     }
 
     public String getUrlLocal() {
-        return "http://" + IpAdress + ":8555";
+        return "http://" + ipAdress + ":8555";
     }
 
     public String getUrlMLV() {
-        return "http://mlv.co.kr/ict/showvid.php?devid='" + ID + "'&key='" + StreamingKey+"'";
+        return "http://mlv.co.kr/ict/showvid.php?devid='" + id + "'&key='" + streamingKey + "'";
     }
 
-    public String getUrlcheckDevice() {
-        return "http://" + IpAdress + ":8555/get_dev";
+    public String getUrlCheckDevice() {
+        return "http://" + ipAdress + ":8555/get_dev";
     }
 
     public String getUrlChangeWIFI() {
-        return "http://" + IpAdress + ":8555/set_wifi?ssid=" + WifiSSID + "&password=" + WifiPassword;
+        return "http://" + ipAdress + ":8555/set_wifi?ssid=" + wifiSSID + "&password=" + wifiPassword;
     }
 }
