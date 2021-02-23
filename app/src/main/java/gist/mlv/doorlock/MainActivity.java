@@ -110,6 +110,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
         SharedPreferences prefs = getSharedPreferences(Device.PREFERENCE, Context.MODE_PRIVATE);
         mDeviceArrList = new ArrayList<Device>();
         mDeviceAdapter = new DeviceAdapter(this, mMainHandler, mDeviceArrList);
+        mCompareDeviceByIp = new Comparator<Device>() {
+            @Override
+            public int compare(Device o1, Device o2) {
+                return o1.getIpAdress().compareTo(o2.getIpAdress());
+            }
+        };
 
         Map<String, ?> allEntries = prefs.getAll();
         if (allEntries.size() > 0) {
@@ -127,21 +133,15 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 obj.setLocalOnline(false);
             }
             mDeviceArrList.add(obj);
+            Collections.sort(mDeviceArrList, mCompareDeviceByIp);
+            mMainHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mDeviceListView.setAdapter(mDeviceAdapter);
+                    mDeviceAdapter.notifyDataSetChanged();
+                }
+            });
         }
-        mCompareDeviceByIp = new Comparator<Device>() {
-            @Override
-            public int compare(Device o1, Device o2) {
-                return o1.getIpAdress().compareTo(o2.getIpAdress());
-            }
-        };
-        Collections.sort(mDeviceArrList, mCompareDeviceByIp);
-        mMainHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                mDeviceListView.setAdapter(mDeviceAdapter);
-                mDeviceAdapter.notifyDataSetChanged();
-            }
-        });
 
         prefs = getPreferences(Context.MODE_PRIVATE);
         String localeCode = prefs.getString(LANGUAGE_PREF, "en");
