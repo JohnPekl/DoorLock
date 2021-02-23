@@ -10,7 +10,7 @@
         android:layout_height="0dp"
         android:layout_weight="0.2"
         android:text="@string/lang_en"
-        android:drawableLeft= "@drawable/flag_round_us"/>
+        android:drawableStart="@drawable/flag_round_us"/>
 
     <Button
         android:id="@+id/btn_lang_vi"
@@ -18,7 +18,7 @@
         android:layout_height="0dp"
         android:layout_weight="0.2"
         android:text="@string/lang_vi"
-        android:drawableLeft="@drawable/flag_round_vi" />
+        android:drawableStart="@drawable/flag_round_vi" />
 
     <Button
         android:id="@+id/btn_lang_ko"
@@ -26,5 +26,5 @@
         android:layout_height="0dp"
         android:layout_weight="0.2"
         android:text="@string/lang_ko"
-        android:drawableLeft="@drawable/flag_round_ko"/>
+        android:drawableStart="@drawable/flag_round_ko"/>
 </LinearLayout>

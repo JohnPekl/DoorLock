@@ -114,7 +114,8 @@
             android:layout_height="match_parent"
             android:layout_weight="0.5"
             android:gravity="center_vertical|center"
-            android:text="@string/ok">
+            android:text="@string/ok"
+            style="?android:attr/buttonBarButtonStyle">
         </Button>
         <Button
             android:id="@+id/wifi_cancel"
@@ -122,7 +123,8 @@
             android:layout_height="match_parent"
             android:layout_weight="0.5"
             android:gravity="center_vertical|center"
-            android:text="@string/cancel">
+            android:text="@string/cancel"
+            style="?android:attr/buttonBarButtonStyle">
         </Button>
     </LinearLayout>
 

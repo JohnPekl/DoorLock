@@ -7,7 +7,7 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="0dip"
-        android:layout_weight="0.3"
+        android:layout_weight="0.2"
         android:orientation="horizontal">
 
         <TextView
@@ -15,39 +15,42 @@
             android:layout_height="match_parent"
             android:layout_weight="0.35"
             android:gravity="center_vertical|center"
-            android:text="@string/streaming_key">
+            android:text="@string/device_name">
         </TextView>
         <EditText
-            android:id="@+id/streaming_key"
+            android:id="@+id/edit_device_name"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.65"
             android:gravity="center_vertical|center"
-            android:inputType="number">
+            android:inputType="text"
+            android:hint="@string/hint_device_name">
         </EditText>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="0dip"
-        android:layout_weight="0.3"
+        android:layout_weight="0.2"
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/streaming_key_ok"
+            android:id="@+id/edit_ok"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.5"
             android:gravity="center_vertical|center"
-            android:text="@string/ok">
+            android:text="@string/ok"
+            style="?android:attr/buttonBarButtonStyle">
         </Button>
         <Button
-            android:id="@+id/streaming_key_cancel"
+            android:id="@+id/edit_cancel"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.5"
             android:gravity="center_vertical|center"
-            android:text="@string/cancel">
+            android:text="@string/cancel"
+            style="?android:attr/buttonBarButtonStyle">
         </Button>
     </LinearLayout>
 

@@ -15,40 +15,15 @@
             android:layout_height="match_parent"
             android:layout_weight="0.35"
             android:gravity="center_vertical|center"
-            android:text="@string/username">
+            android:text="@string/streaming_key">
         </TextView>
         <EditText
-            android:id="@+id/login_username"
+            android:id="@+id/streaming_key"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.65"
             android:gravity="center_vertical|center"
-            android:hint="@string/default_login">
-        </EditText>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/wifi_pwd_layout"
-        android:layout_width="fill_parent"
-        android:layout_height="0dip"
-        android:layout_weight="0.3"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.35"
-            android:gravity="center_vertical|center"
-            android:text="@string/password">
-        </TextView>
-        <EditText
-            android:id="@+id/login_password"
-            android:layout_width="0dp"
-            android:inputType="textPassword"
-            android:layout_height="match_parent"
-            android:layout_weight="0.65"
-            android:gravity="center_vertical|center"
-            android:hint="@string/default_login">
+            android:inputType="number">
         </EditText>
     </LinearLayout>
 
@@ -59,20 +34,22 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/login_ok"
+            android:id="@+id/streaming_key_ok"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.5"
             android:gravity="center_vertical|center"
-            android:text="@string/ok">
+            android:text="@string/ok"
+            style="?android:attr/buttonBarButtonStyle">
         </Button>
         <Button
-            android:id="@+id/login_cancel"
+            android:id="@+id/streaming_key_cancel"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.5"
             android:gravity="center_vertical|center"
-            android:text="@string/cancel">
+            android:text="@string/cancel"
+            style="?android:attr/buttonBarButtonStyle">
         </Button>
     </LinearLayout>
 

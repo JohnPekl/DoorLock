@@ -22,6 +22,7 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
+import androidx.annotation.NonNull;
 import gist.mlv.doorlock.network.HttpRequest;
 
 public class DeviceAdapter extends ArrayAdapter<Device> implements View.OnClickListener {
@@ -35,7 +36,7 @@ public class DeviceAdapter extends ArrayAdapter<Device> implements View.OnClickL
         mMainHandler = handler;
     }
 
-    @Override
+    @Override @NonNull
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
         Device device = mArrayDevice.get(position);
@@ -92,7 +93,7 @@ public class DeviceAdapter extends ArrayAdapter<Device> implements View.OnClickL
 
                 if(stream.getStreamingKey() == null) {
                     LayoutInflater layoutInflater = (LayoutInflater) mMainActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    View view_streamingkey = layoutInflater.inflate(R.layout.streaming_key, null);
+                    View view_streamingkey = layoutInflater.inflate(R.layout.input_streamingkey, null);
                     final AlertDialog alertDialog = new AlertDialog.Builder(mMainActivity).create();
                     alertDialog.setCancelable(false);
                     view_streamingkey.findViewById(R.id.streaming_key_cancel).setOnClickListener(new View.OnClickListener() {
@@ -128,7 +129,7 @@ public class DeviceAdapter extends ArrayAdapter<Device> implements View.OnClickL
 
     private void checkUserPassword(final Device d, final Intent iConnect){
         LayoutInflater layoutInflater = (LayoutInflater) mMainActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view_login = layoutInflater.inflate(R.layout.username_password, null);
+        View view_login = layoutInflater.inflate(R.layout.loggin, null);
         final AlertDialog alertDialog = new AlertDialog.Builder(mMainActivity).create();
         alertDialog.setTitle(R.string.user_pwd);
         alertDialog.setCancelable(false);

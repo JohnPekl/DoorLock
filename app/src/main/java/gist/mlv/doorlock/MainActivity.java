@@ -187,7 +187,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 break;
             case R.id.imb_setting:
                 LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                View view_setting = layoutInflater.inflate(R.layout.langguage_setting, null);
+                View view_setting = layoutInflater.inflate(R.layout.language_setting, null);
                 final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
                 alertDialog.setTitle(R.string.lang_ch);
                 alertDialog.setCancelable(true);
@@ -264,28 +264,17 @@ public class MainActivity extends Activity implements View.OnClickListener {
         switch (item.getItemId()) {
             case R.id.menu_edit:
                 LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                final View view = layoutInflater.inflate(R.layout.input_wifi_info, null);
+                final View view = layoutInflater.inflate(R.layout.input_edit_devicename, null);
                 final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
                 alertDialog.setTitle(R.string.wifi_title);
                 alertDialog.setCancelable(false);
 
-                final EditText edt_ssid = (EditText) view.findViewById(R.id.wifi_name);
-                final EditText edt_password = (EditText) view.findViewById(R.id.wifi_pwd);
-                final LinearLayout pwd_layout = (LinearLayout) view.findViewById(R.id.wifi_pwd_layout);
-                final CheckBox cbx = (CheckBox) view.findViewById(R.id.wifi_cbx);
-                final EditText edt_name = (EditText) view.findViewById(R.id.device_name);
-                Button btn_wifiok = (Button) view.findViewById(R.id.wifi_ok);
-                Button btn_wificancel = (Button) view.findViewById(R.id.wifi_cancel);
+                final EditText edt_name = (EditText) view.findViewById(R.id.edit_device_name);
+                Button btn_wifiok = (Button) view.findViewById(R.id.edit_ok);
+                Button btn_wificancel = (Button) view.findViewById(R.id.edit_cancel);
 
                 final Device device = mDeviceArrList.get(position);
-                edt_ssid.setText(device.getWifiSSID());
                 edt_name.setText(device.getName());
-                if (device.getWifiPassword().length() == 0) {
-                    cbx.setChecked(true);
-                    pwd_layout.setVisibility(View.GONE);
-                } else {
-                    edt_password.setText(device.getWifiPassword());
-                }
                 alertDialog.setView(view);
                 alertDialog.show();
                 btn_wificancel.setOnClickListener(new View.OnClickListener() {
@@ -298,29 +287,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     @Override
                     public void onClick(View view) {
                         String device_name = edt_name.getText().toString();
-                        String ssid = edt_ssid.getText().toString();
-                        String pwd = edt_password.getText().toString();
                         alertDialog.dismiss();
-
                         device.setName(device_name);
-                        device.setWifiSSID(ssid);
-                        device.setWifiPassword(pwd);
-
                         mDeviceArrList.set(position, device);
                         mDeviceAdapter.notifyDataSetChanged();
                         device.savePreferences(context);
                         Toast.makeText(context, R.string.toast_update, Toast.LENGTH_SHORT).show();
-                    }
-                });
-                cbx.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (cbx.isChecked()) {
-                            pwd_layout.setVisibility(View.GONE);
-                            edt_password.setText("");
-                        } else {
-                            pwd_layout.setVisibility(View.VISIBLE);
-                        }
                     }
                 });
                 return true;
@@ -369,7 +341,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private void showWIFIDialog() {
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final View view = layoutInflater.inflate(R.layout.input_wifi_info, null);
+        final View view = layoutInflater.inflate(R.layout.setup_device, null);
         final AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
         alertDialog.setTitle(R.string.wifi_title);
         alertDialog.setCancelable(false);
