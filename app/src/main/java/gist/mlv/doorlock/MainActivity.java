@@ -266,7 +266,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 final View view = layoutInflater.inflate(R.layout.input_edit_devicename, null);
                 final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
-                alertDialog.setTitle(R.string.wifi_title);
                 alertDialog.setCancelable(false);
 
                 final EditText edt_name = (EditText) view.findViewById(R.id.edit_device_name);
@@ -350,7 +349,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         final EditText pwd_edt = (EditText) view.findViewById(R.id.wifi_pwd);
         final LinearLayout pwd_layout = (LinearLayout) view.findViewById(R.id.wifi_pwd_layout);
         final CheckBox cbx = (CheckBox) view.findViewById(R.id.wifi_cbx);
-        final EditText name_edt = (EditText) view.findViewById(R.id.device_name);
         Button wifi_ok = (Button) view.findViewById(R.id.wifi_ok);
         Button wifi_cancel = (Button) view.findViewById(R.id.wifi_cancel);
 
@@ -374,21 +372,15 @@ public class MainActivity extends Activity implements View.OnClickListener {
         wifi_ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String device_name = name_edt.getText().toString();
                 String ssid = ssid_edt.getText().toString();
                 String pwd = pwd_edt.getText().toString();
 
-                if (device_name.length() == 0 || ssid.length() == 0) {
+                if (ssid.length() == 0) {
                     Toast.makeText(MainActivity.this, R.string.toast_name_ssid, Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (device_name.length() > 10) {
-                    Toast.makeText(MainActivity.this, R.string.toast_len, Toast.LENGTH_SHORT).show();
                     return;
                 }
                 Device device = new Device("000-000-000" + Math.random(), "admin", "admin");
                 device.setIpAdress("192.168.0.99");
-                device.setName(device_name);
                 device.setWifiSSID(ssid);
                 device.setWifiPassword(pwd);
                 if (mDeviceArrList.contains(device)) { // checking whether device is added or not
