@@ -4,27 +4,29 @@
     android:layout_height="fill_parent"
     android:orientation="vertical"
     android:background="@color/background">
+
     <LinearLayout
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="0dip"
         android:layout_gravity="top"
         android:layout_weight="0.1"
         android:orientation="horizontal">
+
         <ImageButton
             android:id="@+id/imb_setting"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.1"
-            android:background="@drawable/threebar_setting"/>
-    <TextView
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="0.9"
-        android:textSize="30sp"
-        android:gravity="center_vertical|center"
-        android:text="@string/main_title">
-    </TextView>
-        </LinearLayout>
+            android:background="@drawable/threebar_setting" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.9"
+            android:gravity="center_horizontal|center"
+            android:text="@string/main_title"
+            android:textSize="30sp"></TextView>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -63,7 +65,7 @@
         android:layout_gravity="top"
         android:layout_weight="0.05"
         android:orientation="vertical"
-        android:gravity="center_horizontal"
+        android:gravity="center_horizontal|center"
         android:textAllCaps="false"
         android:text="@string/copyright">
     </TextView>
